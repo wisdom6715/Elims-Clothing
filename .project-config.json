@@ -1,0 +1,42 @@
+{
+  "build_command": "pnpm run build",
+  "capabilities": [
+    "server",
+    "db",
+    "user"
+  ],
+  "dev_command": "pnpm run dev",
+  "env_vars": {
+    "DATABASE_URL": "mysql://rwecibxjbb2WKL4.root:UYQZP0np4v9792HZfuut@gateway03.us-east-1.prod.aws.tidbcloud.com:4000/UWzY9oqH87RLQuTz8mirXp?ssl={\"rejectUnauthorized\":true}"
+  },
+  "experiments": [
+    "no_db_push"
+  ],
+  "git_remote": {
+    "repo_url": "https://7f0548f6b28a1758d9bf7be630d36cb4.artifacts.cloudflare.net/git/prod/UWzY9oqH87RLQuTz8mirXp.git",
+    "expiration": "2026-08-25T03:55:42.228Z",
+    "token": "art_v2_x_347100e8a358dd224ad818af233a07b2d69eb405?expires=1787630142",
+    "backend": "GIT_BACKEND_ARTIFACTS"
+  },
+  "name": "elims-storefront",
+  "path": "/home/ubuntu/elims-storefront",
+  "port": 3000,
+  "secrets": {
+    "BUILT_IN_FORGE_API_KEY": "HV7BzwAgD6ZdnxnXyiHwuE",
+    "BUILT_IN_FORGE_API_URL": "https://forge.manus.ai",
+    "JWT_SECRET": "gunKcBNwZQZ6qufvXhBwFR",
+    "OAUTH_SERVER_URL": "https://api.manus.im",
+    "OWNER_NAME": "Olayiwola ibrahim",
+    "OWNER_OPEN_ID": "N9i5X967YZnzWxr7rxBo5p",
+    "VITE_ANALYTICS_ENDPOINT": "https://manus-analytics.com",
+    "VITE_ANALYTICS_WEBSITE_ID": "3dd2ebb0-2b48-44fb-9ed6-56f3230e1e72",
+    "VITE_APP_ID": "UWzY9oqH87RLQuTz8mirXp",
+    "VITE_APP_LOGO": "",
+    "VITE_APP_TITLE": "Elims Clothing Storefront",
+    "VITE_FRONTEND_FORGE_API_KEY": "JNxxQZRao4LQbctL7zaenN",
+    "VITE_FRONTEND_FORGE_API_URL": "https://forge.manus.ai",
+    "VITE_OAUTH_PORTAL_URL": "https://manus.im"
+  },
+  "template_id": "web-db-user",
+  "test_command": "pnpm test"
+}

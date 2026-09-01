@@ -1,0 +1,69 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --cream: #faf9f4;
+  --warm-gray: #f1eee6;
+  --dark-brown: #173f35;
+  --mid-brown: #4f7569;
+  --light-tan: #d8ceb9;
+  --text-muted: #65756d;
+  --elims-green: #0f473a;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background-color: var(--cream);
+  color: var(--elims-green);
+  font-family: "DM Sans", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+button, a { -webkit-tap-highlight-color: transparent; }
+button:active, a:active { transform: scale(0.98); }
+
+@layer utilities {
+  .text-dark-brown { color: var(--dark-brown); }
+  .text-mid-brown { color: var(--mid-brown); }
+  .text-text-muted { color: var(--text-muted); }
+  .bg-dark-brown { background-color: var(--dark-brown); }
+  .bg-mid-brown { background-color: var(--mid-brown); }
+  .bg-warm-gray { background-color: var(--warm-gray); }
+  .bg-cream { background-color: var(--cream); }
+  .border-dark-brown { border-color: var(--dark-brown); }
+  .font-display { font-family: "DM Serif Display", Georgia, serif; }
+  .eyebrow { @apply text-[10px] font-semibold uppercase tracking-[0.16em]; }
+  .display-title { @apply font-display text-3xl leading-[0.94] text-[#0f473a] sm:text-4xl lg:text-5xl; }
+  .editorial-link { @apply items-center gap-2 border-b border-current pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition-opacity hover:opacity-60; }
+  .store-shell { @apply mx-auto w-full max-w-[1460px] px-4 sm:px-6 lg:px-10; }
+}
+
+/* Preserve the legacy checkout component structure while applying the Elims surface system. */
+.elims-checkout [class*="shadow-sm"] { box-shadow: none !important; }
+.elims-checkout .bg-white { background-color: #fff !important; }
+.elims-checkout [class*="border-gray-100"] { border-color: #dce1d8 !important; }
+.elims-checkout [class*="text-gray-900"],
+.elims-checkout [class*="text-gray-800"] { color: #0f473a !important; }
+.elims-checkout [class*="text-gray-700"],
+.elims-checkout [class*="text-gray-600"] { color: #52685e !important; }
+.elims-checkout [class*="text-gray-500"],
+.elims-checkout [class*="text-gray-400"] { color: #718077 !important; }
+.elims-checkout [class*="border-gray-200"],
+.elims-checkout [class*="border-gray-300"] { border-color: #c6d0c8 !important; }
+.elims-checkout input[type="text"],
+.elims-checkout input[type="email"],
+.elims-checkout input[type="tel"] { border-color: #c6d0c8 !important; color: #0f473a !important; }
+.elims-checkout input[type="text"]:focus,
+.elims-checkout input[type="email"]:focus,
+.elims-checkout input[type="tel"]:focus { border-color: #0f473a !important; box-shadow: 0 0 0 3px #dce9db !important; }
+.elims-checkout [class*="bg-[#C9A96E]"] { background-color: #0f473a !important; }
+.elims-checkout [class*="text-[#C9A96E]"],
+.elims-checkout [class*="text-[#A07840]"] { color: #0f473a !important; }
+.elims-checkout [class*="border-[#C9A96E]"] { border-color: #9db6a5 !important; }
+.elims-checkout [class*="bg-[#C9A96E]/"] { background-color: #edf3e9 !important; }
+.elims-checkout .sticky { border-radius: 1.5rem; background: #e8ede4 !important; border-color: transparent !important; }
+.elims-checkout button[class*="bg-[#C9A96E]"] { border-radius: 9999px !important; letter-spacing: .1em; text-transform: uppercase; font-size: 10px; }
