@@ -49,6 +49,18 @@ const formatNaira = (value: number) =>
     maximumFractionDigits: 0,
   }).format(value);
 
+/**
+ * Picks a sensible slider step for a given max value so the range input
+ * always has ~100 usable increments. Without this, a fixed step (e.g. 5000)
+ * can exceed the whole range for cheaper catalogs, and a browser range
+ * input can then only snap to 0 — which is what made the price filter feel
+ * broken.
+ */
+function getPriceStep(maxPrice: number): number {
+  if (!maxPrice || maxPrice <= 0) return 1;
+  return Math.max(1, Math.round(maxPrice / 100));
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -114,6 +126,13 @@ function FilterContent({
   setPriceRange: (v: number) => void;
   maxPrice: number;
 }) {
+  // Clamp what's actually shown/dragged to the current category's max price.
+  // `priceRange` itself may still hold the large MAX_PRICE sentinel (meaning
+  // "no filter applied"), but the slider must never display or step through
+  // a range larger than the products actually in scope.
+  const displayPrice = Math.min(priceRange, maxPrice);
+  const step = getPriceStep(maxPrice);
+
   return (
     <>
       {/* SIZE */}
@@ -180,14 +199,14 @@ function FilterContent({
           type="range"
           min={0}
           max={maxPrice}
-          step={5000}
-          value={priceRange}
+          step={step}
+          value={displayPrice}
           onChange={(e) => setPriceRange(Number(e.target.value))}
           className="w-full accent-dark-brown cursor-pointer"
         />
         <div className="flex justify-between mt-2">
           <span className="text-xs text-gray-500">$0</span>
-          <span className="text-xs text-gray-500">{formatNaira(priceRange)}</span>
+          <span className="text-xs text-gray-500">{formatNaira(displayPrice)}</span>
         </div>
       </div>
 
