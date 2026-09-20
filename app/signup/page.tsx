@@ -170,7 +170,7 @@ export default function SignupPage() {
 
         {/* Logo */}
         <div className="flex items-center gap-2 mb-10">
-          <div className="w-7 h-7 rounded-sm flex items-center justify-center bg-[#C9A96E]">
+          <div className="w-7 h-7 rounded-sm flex items-center justify-center bg-[#b9cea9]">
             <svg viewBox="0 0 20 20" className="w-4 h-4 fill-white">
               <rect x="2"  y="2"  width="7" height="7" rx="1" />
               <rect x="11" y="2"  width="7" height="7" rx="1" />
@@ -285,7 +285,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-[#C9A96E]"
+            className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-all hover:opacity-90 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 bg-[#b5cfa0]"
           >
             {loading && (
               <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
@@ -308,7 +308,7 @@ export default function SignupPage() {
             type="button"
             onClick={handleGoogle}
             disabled={googleLoading}
-            className="w-full py-2.5 rounded-lg border border-[#E8D9BE] bg-white text-sm font-medium text-gray-700 flex items-center justify-center gap-2.5 hover:border-[#C9A96E] hover:bg-[#FAF8F3] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full py-2.5 rounded-lg border border-[#c7ddb5] bg-white text-sm font-medium text-gray-700 flex items-center justify-center gap-2.5 hover:border-[#C9A96E] hover:bg-[#c3dab0] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {googleLoading ? (
               <svg className="animate-spin w-4 h-4 text-gray-500" viewBox="0 0 24 24" fill="none">
@@ -337,7 +337,7 @@ export default function SignupPage() {
 
       {/* Right — Brand panel */}
       <div
-        className="hidden lg:flex w-1/2 relative items-end justify-start p-12 bg-[#C9A96E]"
+        className="hidden lg:flex w-1/2 relative items-end justify-start p-12 bg-[#a9c592]"
       >
         <div className="absolute inset-0 opacity-20"
           style={{ backgroundImage: "radial-gradient(circle at 70% 30%, #C9A96E 0%, transparent 55%)" }}
@@ -350,7 +350,7 @@ export default function SignupPage() {
               <rect x="2"  y="11" width="7" height="7" rx="1" />
             </svg>
           </div>
-          <span className="text-2xl font-bold text-white tracking-wider">KgLuxe</span>
+          <span className="text-2xl font-bold text-white tracking-wider">Elims Clothings</span>
           <div className="w-px h-8 bg-white/30 mx-1" />
           <span className="text-white/80 text-sm font-light leading-tight">
             Home of premium<br />Designs
