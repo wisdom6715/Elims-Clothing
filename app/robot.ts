@@ -8,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: ['/'],
             disallow: ['/console', '/auth']
         },
-        sitemap: 'https://www.kgluxee.com/sitemap.xml',
+        sitemap: 'https://www.elimsclothings.store/sitemap.xml',
     };
 }

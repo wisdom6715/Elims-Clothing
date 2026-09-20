@@ -11,7 +11,7 @@ export async function fulfillStripeSession(session: Stripe.Checkout.Session) {
   const existing = await adminDb.collection("orders").where("stripe_session_id", "==", session.id).limit(1).get();
   if (!existing.empty) return { confirmed: true, orderId: existing.docs[0].id };
 
-  const pendingRef = adminDb.collection("pending_payments").doc(orderRef);
+  const pendingRef = adminDb.collection("pending_orders").doc(orderRef);
   const pending = await pendingRef.get();
   if (!pending.exists) throw new Error("The pending checkout record was not found.");
   const data = pending.data()!;

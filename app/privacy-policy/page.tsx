@@ -4,14 +4,14 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — KGLUXEE",
+  title: "Privacy Policy — elimsclothing's",
   description:
-    "How KGLUXEE collects, uses, shares, stores, and protects personal data under Nigerian data-protection law.",
+    "How elimsclothing's collects, uses, shares, stores, and protects personal data under Nigerian data-protection law.",
 };
 
 const EFFECTIVE_DATE = "21 August 2026";
-const PRIVACY_EMAIL = "privacy@kgluxee.com";
-const SUPPORT_EMAIL = "hello@kgluxee.com";
+const PRIVACY_EMAIL = "privacy@elimsclothings.com";
+const SUPPORT_EMAIL = "hello@elimsclothings.com";
 const BUSINESS_ADDRESS = "No 9 George street, Alakuko , Lagos state";
 
 export default function PrivacyPolicyPage() {
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
             Privacy Policy
           </h1>
           <p className="mt-5 max-w-3xl text-[15px] leading-relaxed text-neutral-600">
-            This policy explains, in plain language, what personal data KGLUXEE
+            This policy explains, in plain language, what personal data elimsclothing's
             collects, why we use it, which service providers receive it, how
             long we keep it, and how you can exercise your rights.
           </p>
@@ -39,10 +39,10 @@ export default function PrivacyPolicyPage() {
         <div className="space-y-12 text-[15px] leading-relaxed text-neutral-700">
           <Section title="1. Who controls your data">
             <p>
-              KGLUXEE, operated by
+              elimsclothing's, operated by
               <strong> KG LUXEE LIMITED</strong>, is the
               controller responsible for personal data collected through the
-              KGLUXEE website, online store, customer-support channels, and
+              elimsclothing's website, online store, customer-support channels, and
               related services. Our commercial address is
               <strong> {BUSINESS_ADDRESS}</strong>.
             </p>
@@ -290,7 +290,7 @@ export default function PrivacyPolicyPage() {
                   </tr>
                   <tr className="border-b border-neutral-200">
                     <td className="px-3 py-3">
-                      Firebase / Google Cloud services used by KGLUXEE
+                      Firebase / Google Cloud services used by elimsclothing's
                     </td>
                     <td className="px-3 py-3">
                       Authentication, database, hosting, storage, security, and
@@ -337,7 +337,7 @@ export default function PrivacyPolicyPage() {
             <p>
               Some providers that support payment, hosting, authentication,
               security, email, analytics, or delivery may process personal data
-              outside Nigeria. Before making such a transfer, KGLUXEE will use a
+              outside Nigeria. Before making such a transfer, elimsclothing's will use a
               lawful transfer mechanism required by applicable Nigerian law,
               which may include an adequacy decision, contractual safeguards,
               necessity for performing your order, or explicit informed consent
@@ -380,7 +380,7 @@ export default function PrivacyPolicyPage() {
               authentication, least privilege, provider security controls,
               encrypted connections, monitoring, backups, and staff
               confidentiality obligations. Payment card credentials are handled
-              by the payment provider and are not stored by KGLUXEE in full.
+              by the payment provider and are not stored by elimsclothing's in full.
             </p>
             <p className="mt-4">
               No online system is completely risk-free. If we identify a

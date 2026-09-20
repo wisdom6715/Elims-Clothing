@@ -18,7 +18,7 @@ interface Column {
   plain?: boolean; // true = display the raw string value, no unit switching
 }
 
-// ─── Data (transcribed from the KGLuxee size charts) ───────────────────────
+// ─── Data (transcribed from the Elims Clothing's size charts) ───────────────────────
 
 const FITTED_COLUMNS: Column[] = [
   { key: "size", label: "Size", plain: true },

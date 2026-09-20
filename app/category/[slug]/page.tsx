@@ -19,7 +19,7 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: PageProps): Metadata {
   const category = categories.find((c) => c.slug === params.slug);
   if (!category) return {};
-  return { title: `${category.title} | KgLuxee` };
+  return { title: `${category.title} | Elims Clothings` };
 }
 
 export default function Page({ params }: PageProps) {

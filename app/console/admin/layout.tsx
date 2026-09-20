@@ -3,7 +3,7 @@ import AdminSidebar from "./_component/SideBar";
 import AuthGuard from "./_component/AuthGuard";
 
 export const metadata: Metadata = {
-  title: "KgLuxee — Luxury in every deatil",
+  title: "Elims clothing's — Luxury in every deatil",
   description: "Luxury in every deatil",
 };
 

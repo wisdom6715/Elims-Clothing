@@ -1,31 +1,34 @@
-import { cert, getApps, initializeApp } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp, getApps, cert, type App } from "firebase-admin/app";
+import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
-const hasServiceAccount = Boolean(
-  process.env.FIREBASE_PROJECT_ID &&
-    process.env.FIREBASE_CLIENT_EMAIL &&
-    process.env.FIREBASE_PRIVATE_KEY,
-);
+function getAdminApp(): App {
+  const existing = getApps();
+  if (existing.length) return existing[0];
 
-const adminApp = getApps()[0] ??
-  (hasServiceAccount
-    ? initializeApp({
-        credential: cert({
-          projectId: process.env.FIREBASE_PROJECT_ID,
-          clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-          privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-        }),
-      })
-    : null);
-
-/**
- * Uses the original Firebase Admin structure while avoiding build-time
- * credential resolution. Production order routes still fail closed if their
- * service-account environment variables are unavailable.
- */
-export function getAdminDb() {
-  if (!adminApp) {
-    throw new Error("Firebase Admin is not configured. Set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY.");
+  const projectId = process.env.FIREBASE_PROJECT_ID;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+  function normalizePrivateKey(raw?: string) {
+  if (!raw) return undefined;
+  return raw
+      .trim()
+      .replace(/^["']|["']$/g, "") // strip wrapping quotes if they leaked into the value
+      .replace(/\\n/g, "\n")       // literal \n -> real newline
+      .replace(/\r/g, "");         // drop Windows CR characters
   }
-  return getFirestore(adminApp);
+
+  const privateKey = normalizePrivateKey(process.env.FIREBASE_PRIVATE_KEY);
+  
+  if (!projectId || !clientEmail || !privateKey) {
+    throw new Error(
+      "Missing Firebase Admin env vars: FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY"
+    );
+  }
+
+  return initializeApp({
+    credential: cert({ projectId, clientEmail, privateKey }),
+  });
+}
+
+export function getAdminDb(): Firestore {
+  return getFirestore(getAdminApp());
 }

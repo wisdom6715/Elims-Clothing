@@ -4,13 +4,13 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Refund and Return Policy — KGLUXEE",
+  title: "Refund and Return Policy — Elims Clothing's",
   description:
-    "Clear return eligibility, return authorization, refund processing, and international-order terms for KGLUXEE.",
+    "Clear return eligibility, return authorization, refund processing, and international-order terms for Elims Clothing's.",
 };
 
 const EFFECTIVE_DATE = "21 August 2026";
-const SUPPORT_EMAIL = "hello@kgluxee.com";
+const SUPPORT_EMAIL = "hello@Elims Clothing's.com";
 const SUPPORT_PHONE = "+14314588817";
 
 export default function RefundPolicyPage() {
@@ -47,7 +47,7 @@ export default function RefundPolicyPage() {
             <li>
               Wait for our return authorization and follow the return
               instructions. Do not send the product to an address not supplied
-              by KGLUXEE.
+              by Elims Clothing's.
             </li>
             <li>
               After the returned product is received and inspected, we process
@@ -67,7 +67,7 @@ export default function RefundPolicyPage() {
           <Section title="1. Scope">
             <p>
               This Refund and Return Policy applies to products purchased
-              through KGLUXEE&apos;s website or another KGLUXEE sales channel
+              through Elims Clothing's&apos;s website or another Elims Clothing's sales channel
               that refers to this policy. It explains when a product may be
               returned, how to request authorization, who pays return shipping,
               and how refunds are issued. It does not limit any mandatory
@@ -77,7 +77,7 @@ export default function RefundPolicyPage() {
 
           <Section title="2. Return request deadline">
             <p>
-              You must contact KGLUXEE customer support immediately and no later
+              You must contact Elims Clothing's customer support immediately and no later
               than{" "}
               <strong>
                 five calendar days after the date you received the product
@@ -172,7 +172,7 @@ export default function RefundPolicyPage() {
             </p>
             <p className="mt-4">
               If the product arrived defective, damaged, or materially different
-              from the product ordered, KGLUXEE will provide return instructions
+              from the product ordered, Elims Clothing's will provide return instructions
               and reimburse reasonable, documented return shipping costs after
               the return is approved. We do not reimburse optional expedited
               shipping, insurance upgrades, customs penalties caused by
@@ -185,7 +185,7 @@ export default function RefundPolicyPage() {
               We issue the refund after the returned product is delivered to us
               and passes inspection. We will email you the inspection decision
               within <strong>two business days of receipt</strong>. If approved,
-              KGLUXEE will submit the refund to the original payment method
+              Elims Clothing's will submit the refund to the original payment method
               immediately and no later than{" "}
               <strong>three business days of the inspection decision</strong>.
             </p>
@@ -194,7 +194,7 @@ export default function RefundPolicyPage() {
               your account. Allow five to ten business days after we submit the
               refund. International card or bank transactions may take up to 15
               business days because of banking, settlement, or foreign-exchange
-              processes. KGLUXEE cannot change a provider&apos;s posting time
+              processes. Elims Clothing's cannot change a provider&apos;s posting time
               after the refund has been submitted, but we will provide the
               refund reference on request.
             </p>

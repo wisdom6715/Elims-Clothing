@@ -112,7 +112,7 @@ const WHY_CHOOSE = [
   },
   {
     title: "Worldwide Shipping",
-    copy: "Bringing KGLUXEE to your doorstep anywhere.",
+    copy: "Bringing Elims Clothing's to your doorstep anywhere.",
     icon: (
       <>
         <circle cx="12" cy="12" r="9" />
@@ -190,10 +190,10 @@ export default function AboutPage() {
               <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl leading-[0.98] mb-7">
                 About
                 <br />
-                KGLUXEE
+                Elims Clothing's
               </h1>
               <p className="text-[15px] leading-relaxed text-[#6b6860] max-w-md mb-8">
-                Founded on a passion for understated elegance, KGLUXEE is a sanctuary for those who seek the
+                Founded on a passion for understated elegance, Elims Clothing's is a sanctuary for those who seek the
                 extraordinary in the everyday. Our narrative is woven from threads of quality, precision, and an
                 unwavering commitment to timeless style.
               </p>
@@ -246,17 +246,17 @@ export default function AboutPage() {
             <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl leading-snug mb-4">
               Luxury in Every Detail
             </p>
-            <p className="tracking-[0.08em] uppercase text-[11px] text-[#6b6860]">The KGLUXEE Promise</p>
+            <p className="tracking-[0.08em] uppercase text-[11px] text-[#6b6860]">The Elims Clothing's Promise</p>
           </div>
         </section>
 
-        {/* ============ WHO IS KGLUXEE ============ */}
+        {/* ============ WHO IS Elims Clothing's ============ */}
         <section className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 md:py-24">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
             <div data-fade>
-              <h2 className="font-serif text-3xl sm:text-4xl mb-6">Who is KGLUXEE?</h2>
+              <h2 className="font-serif text-3xl sm:text-4xl mb-6">Who is Elims Clothing's?</h2>
               <p className="text-[15px] leading-relaxed text-[#6b6860] mb-5">
-                KGLUXEE is more than a fashion house; it is a manifestation of modern femininity. We specialize in
+                Elims Clothing's is more than a fashion house; it is a manifestation of modern femininity. We specialize in
                 the curation and creation of tailored dresses, kaftans, boubous, and abayas that resonate with the
                 global woman.
               </p>
@@ -307,7 +307,7 @@ export default function AboutPage() {
                   to Quality
                 </h2>
                 <p className="text-[15px] leading-relaxed text-neutral-400 max-w-md mb-10">
-                  At the heart of KGLUXEE lies a relentless pursuit of perfection. We source only the most exquisite
+                  At the heart of Elims Clothing's lies a relentless pursuit of perfection. We source only the most exquisite
                   fabrics from around the world, ensuring that every garment feels as extraordinary as it looks.
                 </p>
 
@@ -327,10 +327,10 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ============ WHY CHOOSE KGLUXEE ============ */}
+        {/* ============ WHY CHOOSE Elims Clothing's ============ */}
         <section data-fade className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 md:py-24">
           <div className="text-center mb-14">
-            <h2 className="font-serif text-3xl sm:text-4xl mb-4">Why Choose KGLUXEE</h2>
+            <h2 className="font-serif text-3xl sm:text-4xl mb-4">Why Choose Elims Clothing's</h2>
             <span className="inline-block w-12 h-px bg-[#161513]" />
           </div>
 
@@ -364,7 +364,7 @@ export default function AboutPage() {
               &ldquo;Look elegant. Feel confident.&rdquo;
             </h2>
             <p className="text-[15px] text-[#6b6860] leading-relaxed mb-9 max-w-lg mx-auto">
-              Our final promise to you is simple: a KGLUXEE piece is an investment in your self-expression. We
+              Our final promise to you is simple: a Elims Clothing's piece is an investment in your self-expression. We
               invite you to experience the harmony of comfort and couture.
             </p>
             <Link

@@ -1,60 +1,107 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Search, ShoppingBag, ChevronDown, Loader2 } from "lucide-react";
-import { collection, query, where, orderBy, onSnapshot, Timestamp } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import { useCurrentUser } from "@/hook/useCurrentUser";
 import { Order } from "../types";
 
 const TABS: Order["status"][] = ["Purchased"];
 
+// Each order carries its own currency (Stripe orders default to USD)
+type OrderRow = Order & { currency: string };
+
+const formatMoney = (value: number, currency = "USD") =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency }).format(Number(value) || 0);
+
+const errorMessage = (code?: string) => {
+  switch (code) {
+    case "permission-denied":
+      return "We couldn't load your orders because of a permissions issue. Please contact support.";
+    case "unavailable":
+      return "Network problem while loading your orders. Please check your connection.";
+    default:
+      return "We couldn't load your orders. Please try again.";
+  }
+};
+
 export default function OrdersPage() {
   const { user, loading: userLoading } = useCurrentUser();
+  const uid = user?.uid;
 
   const [activeTab, setActiveTab] = useState<Order["status"]>("Purchased");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("Recently Added");
 
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderRow[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Fetch this user's orders from Firestore, flattened to one row per item
+  // Live-fetch this user's orders, flattened to one row per item
   useEffect(() => {
-    if (!user) return;
+    if (!uid) {
+      setOrders([]);
+      setOrdersLoading(false);
+      return;
+    }
     setOrdersLoading(true);
+    setError(null);
 
-    const ordersRef = collection(db, "orders");
-    const q = query(ordersRef, where("user_id", "==", user.uid), orderBy("createdAt", "desc"));
+    // No orderBy here: combining where("user_id") with orderBy("createdAt") needs a composite
+    // index, and without it the query fails. We sort newest-first on the client instead.
+    const q = query(collection(db, "orders"), where("user_id", "==", uid));
 
-    const unsub = onSnapshot(q, (snap) => {
-      const rows: Order[] = [];
+    const unsub = onSnapshot(
+      q,
+      (snap) => {
+        const docs = snap.docs.map((d) => {
+          const data = d.data();
+          const createdAt: Date | null =
+            typeof data.createdAt?.toDate === "function" ? data.createdAt.toDate() : null;
+          return { id: d.id, data, createdAt };
+        });
 
-      snap.docs.forEach((d) => {
-        const data = d.data();
-        const createdAt = data.createdAt instanceof Timestamp ? data.createdAt.toDate() : null;
-        const dateStr = createdAt
-          ? createdAt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-          : "";
+        // Newest first
+        docs.sort((a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0));
 
-        (data.items || []).forEach((item: any, idx: number) => {
-          rows.push({
-            id: `${d.id}_${idx}`,
-            orderNumber: d.id.slice(0, 8).toUpperCase(),
-            productName: item.product,
-            price: item.price * (item.quantity ?? 1),
-            status: "Purchased",
-            date: dateStr,
-            imageUrl: item.imageUrl ?? null,
+        const rows: OrderRow[] = [];
+        docs.forEach(({ id, data, createdAt }) => {
+          const dateStr = createdAt
+            ? createdAt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
+            : "";
+          const currency = String(data.currency ?? "USD").toUpperCase();
+
+          (data.items || []).forEach((item: any, idx: number) => {
+            rows.push({
+              id: `${id}_${idx}`,
+              orderNumber: id.slice(0, 8).toUpperCase(),
+              productName:
+                typeof item.product === "string"
+                  ? item.product
+                  : item.product?.name ?? item.name ?? "Item",
+              price: (Number(item.price) || 0) * (item.quantity ?? 1),
+              status: "Purchased",
+              date: dateStr,
+              imageUrl:
+                item.product?.imageUrls?.[0] ?? item.image ?? item.imageUrl ?? item.photoURL ?? null,
+              currency,
+            });
           });
         });
-      });
 
-      setOrders(rows);
-      setOrdersLoading(false);
-    });
+        setOrders(rows);
+        setOrdersLoading(false);
+      },
+      (err) => {
+        // Without this callback a failed query leaves the page on "Loading orders…" forever
+        console.error("Failed to load orders:", err.code, err);
+        setError(errorMessage(err.code));
+        setOrdersLoading(false);
+      }
+    );
 
     return () => unsub();
-  }, [user]);
+  }, [uid]);
 
   const filtered = orders.filter(
     (o) =>
@@ -63,13 +110,11 @@ export default function OrdersPage() {
         o.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  // Firestore query already returns newest-first; just adjust for the other sort modes
-  const sorted = [...filtered].sort((a, b) => {
-    if (sortBy === "Price: High to Low") return b.price - a.price;
-    if (sortBy === "Price: Low to High") return a.price - b.price;
-    if (sortBy === "Oldest First") return filtered.indexOf(b) - filtered.indexOf(a);
-    return 0; // "Recently Added" — keep Firestore's desc order as-is
-  });
+  // `orders` is already newest-first; adjust for the other sort modes
+  const sorted = [...filtered];
+  if (sortBy === "Price: High to Low") sorted.sort((a, b) => b.price - a.price);
+  else if (sortBy === "Price: Low to High") sorted.sort((a, b) => a.price - b.price);
+  else if (sortBy === "Oldest First") sorted.reverse();
 
   const loading = userLoading || ordersLoading;
 
@@ -131,6 +176,14 @@ export default function OrdersPage() {
         <div className="flex items-center justify-center py-20 text-gray-400 gap-2 text-sm">
           <Loader2 size={18} className="animate-spin" /> Loading orders…
         </div>
+      ) : error ? (
+        <div className="flex items-center justify-center py-20 text-sm text-rose-500 text-center">
+          {error}
+        </div>
+      ) : !user ? (
+        <div className="flex items-center justify-center py-20 text-sm text-gray-500">
+          Please sign in to see your orders.
+        </div>
       ) : sorted.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="w-16 h-16 rounded-full bg-cream-100 flex items-center justify-center">
@@ -159,7 +212,7 @@ export default function OrdersPage() {
                 </div>
               </div>
               <div className="flex items-center justify-between sm:flex-col sm:items-end sm:text-right shrink-0 pl-[72px] sm:pl-0">
-                <p className="text-sm font-semibold text-gray-800">${order.price.toLocaleString()}</p>
+                <p className="text-sm font-semibold text-gray-800">{formatMoney(order.price, order.currency)}</p>
                 <span className="text-xs px-2 py-0.5 rounded-full bg-cream-100 text-[#A07840] font-medium">{order.status}</span>
               </div>
             </div>

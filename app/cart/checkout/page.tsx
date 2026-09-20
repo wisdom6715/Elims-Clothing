@@ -33,7 +33,6 @@ import { formatCurrency } from "@/lib/storefront-utils";
 import { getCheckoutValidationError } from "@/lib/checkout-validation";
 
 export default function CheckoutPage() {
-  const router = useRouter();
   const { user, loading: userLoading } = useCurrentUser();
 
   const { items, loading: itemsLoading, isGuest } = useCart();
@@ -751,8 +750,8 @@ export default function CheckoutPage() {
                     >
                       Privacy Policy
                     </a>
-                    . I understand that payment is processed through Flutterwave
-                    or the payment provider displayed at checkout, and KGLUXEE
+                    . I understand that payment is processed through Stripe
+                    or the payment provider displayed at checkout, and Elims Clothing's
                     does not store my full card number, CVV, PIN, or
                     online-banking password.
                   </span>

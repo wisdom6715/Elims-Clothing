@@ -8,6 +8,33 @@ import { updateProfile, reauthenticateWithCredential, EmailAuthProvider, updateP
 import { auth, db } from "@/lib/firebase.config";
 import { toast } from "sonner";
 
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+// Turns Firebase error codes into something actionable
+const photoErrorMessage = (code?: string) => {
+  switch (code) {
+    case "storage/unauthorized":
+      return "Upload blocked by Firebase Storage rules. Check that signed-in users can write to avatars/.";
+    case "storage/unauthenticated":
+      return "Your session expired. Please sign in again and retry.";
+    case "storage/bucket-not-found":
+    case "storage/project-not-found":
+      return "Storage isn't configured correctly. Check NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET.";
+    case "storage/quota-exceeded":
+      return "Storage quota exceeded.";
+    case "storage/retry-limit-exceeded":
+      return "Network problem while uploading. Please try again.";
+    case "storage/canceled":
+      return "Upload cancelled.";
+    case "permission-denied":
+      return "Photo uploaded, but saving it to your profile was blocked by Firestore rules.";
+    case "not-found":
+      return "Your profile record wasn't found, so the photo couldn't be saved.";
+    default:
+      return "Upload failed. Please try again.";
+  }
+};
+
 // ── Sub-components ────────────────────────────────────────────────────────────
 
 function SectionCard({ title, onEdit, children }: { title: string; onEdit?: () => void; children: React.ReactNode }) {
@@ -92,6 +119,8 @@ export default function AccountPage() {
   const [savingContact,  setSavingContact]  = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  // Shows the new photo immediately, even if useCurrentUser doesn't live-update
+  const [localPhotoURL, setLocalPhotoURL] = useState<string | null>(null);
 
   // Drafts — initialised from real user data when editing starts
   const [draftBasic,    setDraftBasic]    = useState({ firstName: "", lastName: "", gender: "", dateOfBirth: "" });
@@ -203,8 +232,18 @@ export default function AccountPage() {
   // ── Photo upload ───────────────────────────────────────────────────────────
 
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user || !auth.currentUser) return;
+    // Grab the file, then reset the input right away so picking the same file again
+    // always fires onChange (the File object stays valid after the reset)
+    const input = e.currentTarget;
+    const file = input.files?.[0];
+    input.value = "";
+    if (!file) return;
+
+    const currentUser = auth.currentUser;
+    if (!user || !currentUser) {
+      toast.error("You're signed out. Please sign in again.");
+      return;
+    }
 
     const validTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!validTypes.includes(file.type)) {
@@ -216,34 +255,36 @@ export default function AccountPage() {
       return;
     }
 
-    const storage  = getStorage();
-    const photoRef = ref(storage, `avatars/${user.uid}`);
-    const task     = uploadBytesResumable(photoRef, file);
+    try {
+      setUploadProgress(0);
 
-    task.on(
-      "state_changed",
-      (snap) => {
-        const pct = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-        setUploadProgress(pct);
-      },
-      (err) => {
-        console.error(err);
-        toast.error("Upload failed. Please try again.");
-        setUploadProgress(null);
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(task.snapshot.ref);
+      // 1. Upload to Storage
+      const photoRef = ref(getStorage(), `avatars/${user.uid}`);
+      const task = uploadBytesResumable(photoRef, file, { contentType: file.type });
+      await new Promise<void>((resolve, reject) => {
+        task.on(
+          "state_changed",
+          (snap) => setUploadProgress(Math.round((snap.bytesTransferred / snap.totalBytes) * 100)),
+          reject,
+          () => resolve()
+        );
+      });
 
-        // Save to Firestore + Firebase Auth profile
-        await updateDoc(userDocRef(), { photoURL: downloadURL, updatedAt: serverTimestamp() });
-        await updateProfile(auth.currentUser!, { photoURL: downloadURL });
+      // 2. Save the URL to Firestore + Firebase Auth profile
+      const downloadURL = await getDownloadURL(task.snapshot.ref);
+      await updateDoc(userDocRef(), { photoURL: downloadURL, updatedAt: serverTimestamp() });
+      await updateProfile(currentUser, { photoURL: downloadURL });
 
-        toast.success("Profile photo updated!");
-        setUploadProgress(null);
-        // Clear input so the same file can be re-selected if needed
-        e.target.value = "";
-      }
-    );
+      // 3. Show it immediately
+      setLocalPhotoURL(downloadURL);
+      toast.success("Profile photo updated!");
+    } catch (err: any) {
+      console.error("Photo upload failed:", err?.code, err);
+      toast.error(photoErrorMessage(err?.code));
+    } finally {
+      // Always runs, so the button never gets stuck on "Uploading…"
+      setUploadProgress(null);
+    }
   };
 
   // ── Loading / unauthenticated states ──────────────────────────────────────
@@ -260,6 +301,8 @@ export default function AccountPage() {
     return <p className="text-sm text-gray-500 p-6">You're not logged in.</p>;
   }
 
+  const photoSrc = localPhotoURL ?? user.photoURL;
+
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
@@ -272,8 +315,8 @@ export default function AccountPage() {
           {/* Avatar */}
           <div className="relative w-16 h-16 shrink-0">
             <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden">
-              {user.photoURL ? (
-                <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+              {photoSrc ? (
+                <img src={photoSrc} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
                 <svg viewBox="0 0 64 64" className="w-full h-full" fill="none">
                   <circle cx="32" cy="24" r="11" fill="#cbd5e1" />
@@ -326,12 +369,6 @@ export default function AccountPage() {
             saving={savingBasic}
           />
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          <Field label="First Name"    value={draftBasic.firstName}   editing={editingBasic} onChange={(v) => setDraftBasic((d) => ({ ...d, firstName: v }))} />
-          <Field label="Last Name"     value={draftBasic.lastName}    editing={editingBasic} onChange={(v) => setDraftBasic((d) => ({ ...d, lastName: v }))} />
-          <Field label="Gender"        value={draftBasic.gender}      editing={editingBasic} onChange={(v) => setDraftBasic((d) => ({ ...d, gender: v }))} />
-          <Field label="Date of Birth" value={draftBasic.dateOfBirth} editing={editingBasic} onChange={(v) => setDraftBasic((d) => ({ ...d, dateOfBirth: v }))} type="date" />
-        </div>
         {/* Display mode: pull from live user data */}
         {!editingBasic && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

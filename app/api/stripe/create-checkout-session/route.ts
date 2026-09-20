@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     const lineItems = createLineItems(items, currency);
     const amount = lineItems.reduce((sum, item) => sum + Number(item.price_data.unit_amount) * Number(item.quantity), 0) / 100;
     const adminDb = getAdminDb();
-    const pendingRef = adminDb.collection("pending_payments").doc(orderRef);
+    const pendingRef = adminDb.collection("pending_orders").doc(orderRef);
     const existing = await pendingRef.get();
 
     if (existing.exists && existing.data()?.stripe_session_url) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
 import {
   Search,
@@ -11,47 +11,53 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronDown,
+  ShoppingBag,
   X,
 } from "lucide-react";
 
-// ---------- Types (matches the "orders" collection shape) ----------
+// ---------- Types (matches the Stripe "orders" documents) ----------
 
 interface OrderAddress {
-  city: string;
-  country: string;
-  id: string;
-  isDefault: boolean;
-  label: string;
-  phone_number: string;
-  state: string;
   street: string;
-  zip: string;
+  city: string;
+  state: string;
+  country: string;
+  zip?: string;
+  label?: string;
+  phone_number?: string;
 }
 
 interface OrderItem {
-  cartItemId: string;
+  cartItemId?: string;
   color: string | null;
   price: number;
   product: string;
-  product_id: string;
+  product_id?: string;
   quantity: number;
   size: string | null;
+  // Fallbacks in case the item snapshot stored an image itself
+  image?: string | null;
+  imageUrl?: string | null;
 }
 
 type OrderStatus = "confirmed" | "in_progress" | "delivered" | "cancelled" | string;
 
 interface Order {
-  docId: string; // Firestore document id
-  address: OrderAddress;
+  docId: string; // Firestore document id (same as order_ref for Stripe orders)
+  address: OrderAddress | null;
   amount: number;
+  currency: string; // e.g. "USD"
   createdAt: Date | null;
-  flw_ref: string;
-  flw_transaction_id: number;
+  email: string | null;
+  guest: boolean;
   items: OrderItem[];
+  livemode: boolean; // false = Stripe test mode
+  order_ref: string;
   phone: string;
   status: OrderStatus;
-  tx_ref: string;
-  user_id: string;
+  stripe_payment_intent: string | null;
+  stripe_session_id: string | null;
+  user_id: string | null;
   username: string;
 }
 
@@ -106,12 +112,13 @@ function StatusBadge({ status }: { status: string }) {
 
 // ---------- Formatting helpers ----------
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2,
-});
+// Each order carries its own currency (defaults to USD)
+function formatMoney(value: number, currency = "USD") {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(Number(value) || 0);
+}
 
 function formatDate(date: Date | null) {
   if (!date) return "—";
@@ -149,6 +156,77 @@ function toDate(value: any): Date | null {
   return null;
 }
 
+// ---------- Product images (fetched by product_id from the "products" collection) ----------
+
+// Simple in-memory cache so reopening an order (or the same product on several orders)
+// doesn't hit Firestore again
+const productImageCache = new Map<string, string | null>();
+
+async function fetchProductImage(productId: string): Promise<string | null> {
+  if (productImageCache.has(productId)) return productImageCache.get(productId)!;
+  try {
+    const snap = await getDoc(doc(db, "products", productId));
+    const data = snap.exists() ? snap.data() : null;
+    // Adjust this if your product documents store the image under a different field
+    const url: string | null =
+      data?.imageUrls?.[0] ?? data?.imageUrl ?? data?.image ?? data?.photoURL ?? null;
+    productImageCache.set(productId, url); // also caches "product deleted / no image"
+    return url;
+  } catch (err) {
+    console.error(`Failed to fetch product ${productId}:`, err);
+    return null; // not cached, so a later open can retry
+  }
+}
+
+// One read per unique product_id in the order (n+1 for now)
+function useProductImages(items: OrderItem[]) {
+  const ids = useMemo(
+    () =>
+      Array.from(
+        new Set(items.map((i) => i.product_id).filter((id): id is string => Boolean(id)))
+      ),
+    [items]
+  );
+  const [images, setImages] = useState<Record<string, string | null>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all(ids.map(async (id) => [id, await fetchProductImage(id)] as const)).then(
+      (entries) => {
+        if (!cancelled) setImages(Object.fromEntries(entries));
+      }
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [ids]);
+
+  return images;
+}
+
+function ItemThumb({
+  src,
+  pending,
+  alt,
+}: {
+  src: string | null;
+  pending: boolean;
+  alt: string;
+}) {
+  if (pending) {
+    return <div className="h-12 w-12 shrink-0 animate-pulse rounded-lg bg-stone-100" />;
+  }
+  return (
+    <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-stone-100">
+      {src ? (
+        <img src={src} alt={alt} className="h-full w-full object-cover" />
+      ) : (
+        <ShoppingBag className="h-5 w-5 text-stone-400" strokeWidth={1.5} />
+      )}
+    </div>
+  );
+}
+
 // ---------- Order details modal ----------
 
 function OrderDetailsModal({
@@ -158,10 +236,14 @@ function OrderDetailsModal({
   order: Order;
   onClose: () => void;
 }) {
+  const images = useProductImages(order.items);
   const itemsTotal = order.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  const stripeUrl = order.stripe_payment_intent
+    ? `https://dashboard.stripe.com/${order.livemode ? "" : "test/"}payments/${order.stripe_payment_intent}`
+    : null;
 
   return (
     <div
@@ -177,8 +259,8 @@ function OrderDetailsModal({
             <p className="text-xs font-semibold uppercase tracking-wide text-stone-400">
               Order
             </p>
-            <h2 className="mt-1 font-serif text-2xl font-medium text-stone-900">
-              {order.tx_ref}
+            <h2 className="mt-1 break-all font-serif text-2xl font-medium text-stone-900">
+              {order.order_ref}
             </h2>
           </div>
           <button
@@ -195,6 +277,11 @@ function OrderDetailsModal({
           {/* Summary */}
           <div className="flex flex-wrap items-center gap-4">
             <StatusBadge status={order.status} />
+            {!order.livemode && (
+              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-800">
+                Test order
+              </span>
+            )}
             <span className="text-sm text-stone-500">
               Placed {formatDate(order.createdAt)}
             </span>
@@ -214,8 +301,20 @@ function OrderDetailsModal({
                 {getInitials(order.username)}
               </span>
               <div>
-                <p className="font-medium text-stone-900">{order.username}</p>
-                <p className="text-sm text-stone-500">{order.phone}</p>
+                <p className="font-medium text-stone-900">
+                  {order.username}
+                  {order.guest && (
+                    <span className="ml-2 text-xs font-normal text-stone-400">
+                      (guest)
+                    </span>
+                  )}
+                </p>
+                {order.email && (
+                  <p className="text-sm text-stone-500">{order.email}</p>
+                )}
+                {order.phone && (
+                  <p className="text-sm text-stone-500">{order.phone}</p>
+                )}
               </div>
             </div>
           </div>
@@ -226,16 +325,26 @@ function OrderDetailsModal({
               Shipping address
             </h3>
             <div className="mt-3 rounded-xl bg-stone-50 p-4 text-sm text-stone-700">
-              <p className="font-medium capitalize">{order.address.label}</p>
-              <p className="mt-1">{order.address.street}</p>
-              <p>
-                {order.address.city}, {order.address.state}{" "}
-                {order.address.zip}
-              </p>
-              <p>{order.address.country}</p>
-              <p className="mt-1 text-stone-500">
-                {order.address.phone_number}
-              </p>
+              {order.address ? (
+                <>
+                  {order.address.label && (
+                    <p className="font-medium capitalize">{order.address.label}</p>
+                  )}
+                  <p className="mt-1">{order.address.street}</p>
+                  <p>
+                    {order.address.city}, {order.address.state}{" "}
+                    {order.address.zip ?? ""}
+                  </p>
+                  <p>{order.address.country}</p>
+                  {order.address.phone_number && (
+                    <p className="mt-1 text-stone-500">
+                      {order.address.phone_number}
+                    </p>
+                  )}
+                </>
+              ) : (
+                <p className="text-stone-500">No address on file.</p>
+              )}
             </div>
           </div>
 
@@ -245,37 +354,45 @@ function OrderDetailsModal({
               Items ({order.items.length})
             </h3>
             <div className="mt-3 divide-y divide-stone-100 rounded-xl border border-stone-100">
-              {order.items.map((item) => (
-                <div
-                  key={item.cartItemId}
-                  className="flex items-center justify-between gap-4 px-4 py-3"
-                >
-                  <div>
-                    <p className="font-medium text-stone-900">
-                      {item.product}
-                    </p>
-                    <p className="text-xs text-stone-500">
-                      Qty {item.quantity}
-                      {item.color ? ` · ${item.color}` : ""}
-                      {item.size ? ` · Size ${item.size}` : ""}
+              {order.items.map((item, i) => {
+                const id = item.product_id;
+                const pending = Boolean(id) && !(id! in images);
+                const src = (id ? images[id] : null) ?? item.imageUrl ?? item.image ?? null;
+                return (
+                  <div
+                    key={item.cartItemId ?? `${item.product_id ?? item.product}-${i}`}
+                    className="flex items-center justify-between gap-4 px-4 py-3"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <ItemThumb src={src} pending={pending} alt={item.product} />
+                      <div className="min-w-0">
+                        <p className="font-medium text-stone-900">
+                          {item.product}
+                        </p>
+                        <p className="text-xs text-stone-500">
+                          Qty {item.quantity}
+                          {item.color ? ` · ${item.color}` : ""}
+                          {item.size ? ` · Size ${item.size}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                    <p className="whitespace-nowrap font-semibold text-stone-800">
+                      {formatMoney(item.price * item.quantity, order.currency)}
                     </p>
                   </div>
-                  <p className="whitespace-nowrap font-semibold text-stone-800">
-                    {currencyFormatter.format(item.price * item.quantity)}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <div className="mt-3 flex justify-between border-t border-stone-100 px-1 pt-3 text-sm">
               <span className="text-stone-500">Items total</span>
               <span className="font-semibold text-stone-800">
-                {currencyFormatter.format(itemsTotal)}
+                {formatMoney(itemsTotal, order.currency)}
               </span>
             </div>
             <div className="mt-1 flex justify-between px-1 text-sm">
-              <span className="text-stone-500">Order amount</span>
+              <span className="text-stone-500">Amount paid</span>
               <span className="font-semibold text-stone-900">
-                {currencyFormatter.format(order.amount)}
+                {formatMoney(order.amount, order.currency)}
               </span>
             </div>
           </div>
@@ -287,22 +404,44 @@ function OrderDetailsModal({
             </h3>
             <dl className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
               <div>
-                <dt className="text-stone-400">Flutterwave ref</dt>
-                <dd className="break-all text-stone-700">{order.flw_ref}</dd>
+                <dt className="text-stone-400">Stripe payment intent</dt>
+                <dd className="break-all text-stone-700">
+                  {order.stripe_payment_intent ?? "—"}
+                </dd>
               </div>
               <div>
-                <dt className="text-stone-400">Transaction ID</dt>
-                <dd className="text-stone-700">{order.flw_transaction_id}</dd>
+                <dt className="text-stone-400">Checkout session</dt>
+                <dd className="break-all text-stone-700">
+                  {order.stripe_session_id ?? "—"}
+                </dd>
               </div>
               <div>
-                <dt className="text-stone-400">Order ref (tx_ref)</dt>
-                <dd className="break-all text-stone-700">{order.tx_ref}</dd>
+                <dt className="text-stone-400">Order ref (order_ref)</dt>
+                <dd className="break-all text-stone-700">{order.order_ref}</dd>
               </div>
               <div>
                 <dt className="text-stone-400">User ID</dt>
-                <dd className="break-all text-stone-700">{order.user_id}</dd>
+                <dd className="break-all text-stone-700">
+                  {order.user_id ?? "Guest checkout"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-stone-400">Mode</dt>
+                <dd className="text-stone-700">
+                  {order.livemode ? "Live" : "Test"}
+                </dd>
               </div>
             </dl>
+            {stripeUrl && (
+              <a
+                href={stripeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block text-sm font-semibold text-stone-900 underline underline-offset-4 hover:text-stone-600"
+              >
+                View in Stripe →
+              </a>
+            )}
           </div>
         </div>
       </div>
@@ -335,17 +474,21 @@ export default function CustomerOrdersPage() {
           const data = doc.data();
           return {
             docId: doc.id,
-            address: data.address,
-            amount: data.amount,
+            address: data.address ?? null,
+            amount: Number(data.amount) || 0,
+            currency: String(data.currency ?? "USD").toUpperCase(),
             createdAt: toDate(data.createdAt),
-            flw_ref: data.flw_ref,
-            flw_transaction_id: data.flw_transaction_id,
+            email: data.email ?? data.customer?.email ?? null,
+            guest: Boolean(data.guest),
             items: data.items ?? [],
-            phone: data.phone,
+            livemode: data.livemode !== false, // orders without the field count as live
+            order_ref: data.order_ref ?? doc.id,
+            phone: data.phone ?? "",
             status: data.status,
-            tx_ref: data.tx_ref,
-            user_id: data.user_id,
-            username: data.username,
+            stripe_payment_intent: data.stripe_payment_intent ?? null,
+            stripe_session_id: data.stripe_session_id ?? null,
+            user_id: data.user_id ?? null,
+            username: data.username ?? data.customer?.name ?? "Customer",
           };
         });
         setOrders(fetched);
@@ -368,9 +511,13 @@ export default function CustomerOrdersPage() {
       const q = searchQuery.trim().toLowerCase();
       const matchesSearch =
         q.length === 0 ||
-        order.username?.toLowerCase().includes(q) ||
-        order.tx_ref?.toLowerCase().includes(q) ||
-        order.flw_ref?.toLowerCase().includes(q);
+        [
+          order.username,
+          order.email,
+          order.order_ref,
+          order.stripe_payment_intent,
+          order.stripe_session_id,
+        ].some((field) => field?.toLowerCase().includes(q));
       return matchesStatus && matchesSearch;
     });
   }, [orders, statusFilter, searchQuery]);
@@ -386,22 +533,28 @@ export default function CustomerOrdersPage() {
     const header = [
       "Order Ref",
       "Customer",
+      "Email",
       "Phone",
       "Date",
       "Status",
       "Items",
       "Amount",
-      "Flutterwave Ref",
+      "Currency",
+      "Stripe Payment Intent",
+      "Mode",
     ];
     const rows = filteredOrders.map((o) => [
-      o.tx_ref,
+      o.order_ref,
       o.username,
+      o.email ?? "",
       o.phone,
       formatDate(o.createdAt),
       o.status,
       String(o.items.length),
       o.amount.toFixed(2),
-      o.flw_ref,
+      o.currency,
+      o.stripe_payment_intent ?? "",
+      o.livemode ? "Live" : "Test",
     ]);
     const csv = [header, ...rows]
       .map((r) => r.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(","))
@@ -534,9 +687,14 @@ export default function CustomerOrdersPage() {
                       className="cursor-pointer text-stone-800 transition hover:bg-stone-50"
                     >
                       <td className="whitespace-nowrap px-8 py-6 font-medium">
-                        {order.tx_ref.length > 18
-                          ? `${order.tx_ref.slice(0, 18)}…`
-                          : order.tx_ref}
+                        {order.order_ref.length > 18
+                          ? `${order.order_ref.slice(0, 18)}…`
+                          : order.order_ref}
+                        {!order.livemode && (
+                          <span className="ml-2 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-800">
+                            Test
+                          </span>
+                        )}
                       </td>
                       <td className="px-4 py-6">
                         <div className="flex items-center gap-3">
@@ -563,7 +721,7 @@ export default function CustomerOrdersPage() {
                         {order.items.length === 1 ? "" : "s"}
                       </td>
                       <td className="whitespace-nowrap px-8 py-6 text-right font-semibold">
-                        {currencyFormatter.format(order.amount)}
+                        {formatMoney(order.amount, order.currency)}
                       </td>
                     </tr>
                   ))}

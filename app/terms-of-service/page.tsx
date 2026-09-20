@@ -4,13 +4,13 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — KGLUXEE",
+  title: "Terms of Service — elimsclothing's",
   description:
-    "The terms governing purchases, payments, delivery, returns, and use of the KGLUXEE website.",
+    "The terms governing purchases, payments, delivery, returns, and use of the elimsclothing's website.",
 };
 
 const EFFECTIVE_DATE = "21 August 2026";
-const SUPPORT_EMAIL = "hello@kgluxee.com";
+const SUPPORT_EMAIL = "hello@elimsclothings.store";
 const BUSINESS_ADDRESS = "No 9 George street, Alakuko , Lagos state";
 
 export default function TermsOfServicePage() {
@@ -35,10 +35,10 @@ export default function TermsOfServicePage() {
           <Section title="1. Who we are">
             <p>
               These Terms of Service (the <strong>“Terms”</strong>) govern your
-              use of the KGLUXEE website, digital showroom, customer support
+              use of the elimsclothing's website, digital showroom, customer support
               channels, and online store (together, the{" "}
               <strong>“Services”</strong>). The Services are operated by
-              KGLUXEE, a business operated by
+              elimsclothing's, a business operated by
               <strong> KG LUXEE LIMITED</strong>, with its
               principal commercial address at{" "}
               <strong>{BUSINESS_ADDRESS}</strong>.
@@ -112,7 +112,7 @@ export default function TermsOfServicePage() {
             </p>
             <p className="mt-4">
               Payments are processed by Flutterwave or another payment provider
-              displayed at checkout. KGLUXEE does not request or store your full
+              displayed at checkout. elimsclothing's does not request or store your full
               card number, CVV, PIN, or online-banking password. You must use a
               payment method that you are authorized to use. Suspected fraud may
               be reported to the payment provider or relevant authorities.
@@ -120,7 +120,7 @@ export default function TermsOfServicePage() {
             <p className="mt-4">
               Your bank, card issuer, payment provider, or foreign-exchange
               provider may apply separate conversion fees or charges. Those
-              third-party charges are not controlled by KGLUXEE.
+              third-party charges are not controlled by elimsclothing's.
             </p>
           </Section>
 
@@ -139,7 +139,7 @@ export default function TermsOfServicePage() {
               customs information and paying import duties, customs charges,
               destination taxes, brokerage charges, and other charges imposed by
               the destination country unless checkout expressly states that
-              KGLUXEE has included them. We cannot guarantee that a destination
+              elimsclothing's has included them. We cannot guarantee that a destination
               authority will not delay, inspect, or refuse a shipment.
             </p>
           </Section>
@@ -166,9 +166,9 @@ export default function TermsOfServicePage() {
 
           <Section title="8. Intellectual property and permitted use">
             <p>
-              The KGLUXEE name, logos, designs, photographs, text, product
+              The elimsclothing's name, logos, designs, photographs, text, product
               descriptions, software, layouts, and other content are owned by or
-              licensed to KGLUXEE and are protected by applicable intellectual
+              licensed to elimsclothing's and are protected by applicable intellectual
               property laws. We grant you a limited, revocable, non-exclusive
               right to use the Services for personal, lawful shopping purposes.
             </p>
@@ -195,7 +195,7 @@ export default function TermsOfServicePage() {
               excluded or limited under applicable law, including liability for
               fraud, fraudulent misrepresentation, death or personal injury
               caused by negligence, or your statutory consumer rights. Subject
-              to that limitation, KGLUXEE will not be liable for indirect,
+              to that limitation, elimsclothing's will not be liable for indirect,
               incidental, special, or consequential losses. Our total liability
               for a claim connected with an order will not exceed the amount you
               paid for that order.
