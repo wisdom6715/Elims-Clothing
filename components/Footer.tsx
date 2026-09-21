@@ -2,8 +2,8 @@ import Link from "next/link";
 
 const footerGroups = [
   { heading: "Discover", links: [{ label: "All pieces", href: "/products/all" }, { label: "New arrivals", href: "/products/all" }, { label: "Your cart", href: "/cart" }] },
-  { heading: "Customer care", links: [{ label: "Your account", href: "/profile/account" }, { label: "Terms of Service", href: "/terms-of-service" }, { label: "Refund Policy", href: "/refund-policy" }] },
-  { heading: "Company", links: [{ label: "About", href: "/about" }, { label: "Privacy", href: "/privacy-policy" }, { label: "Contact", href: "mailto:hello@elims.com" }] },
+  { heading: "Customer care", links: [{ label: "Privacy Policy", href: "/privacy-policy" }, { label: "Terms of Service", href: "/terms-of-service" }, { label: "Refund Policy", href: "/refund-policy" }] },
+  { heading: "Company", links: [{ label: "About", href: "/about" }, { label: "Our Story", href: "/our-story" }, { label: "Contact", href: "mailto:hello@elims.com" }] },
 ];
 
 export default function Footer() {

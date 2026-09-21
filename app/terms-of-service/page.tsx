@@ -9,9 +9,11 @@ export const metadata: Metadata = {
     "The terms governing purchases, payments, delivery, returns, and use of the elimsclothing's website.",
 };
 
-const EFFECTIVE_DATE = "21 August 2026";
+const EFFECTIVE_DATE = "21 September 2026";
 const SUPPORT_EMAIL = "hello@elimsclothings.store";
-const BUSINESS_ADDRESS = "No 9 George street, Alakuko , Lagos state";
+const BUSINESS_ADDRESS = "";
+// U.S. state whose law governs these Terms (e.g. "Delaware"). Must be filled in.
+const GOVERNING_STATE = "New Jersey";
 
 export default function TermsOfServicePage() {
   return (
@@ -26,7 +28,7 @@ export default function TermsOfServicePage() {
             Terms of Service
           </h1>
           <p className="mt-5 text-xs font-medium tracking-[0.1em] text-neutral-500">
-            EFFECTIVE: {EFFECTIVE_DATE} · VERSION 3.0
+            EFFECTIVE: {EFFECTIVE_DATE} · VERSION 4.0
           </p>
         </header>
 
@@ -38,8 +40,8 @@ export default function TermsOfServicePage() {
               use of the elimsclothing's website, digital showroom, customer support
               channels, and online store (together, the{" "}
               <strong>“Services”</strong>). The Services are operated by
-              elimsclothing's, a business operated by
-              <strong> KG LUXEE LIMITED</strong>, with its
+              elimsclothing's, a business operated by{" "}
+              <strong> Elims Clothing's LLC</strong>, with its
               principal commercial address at{" "}
               <strong>{BUSINESS_ADDRESS}</strong>.
             </p>
@@ -59,9 +61,18 @@ export default function TermsOfServicePage() {
             </p>
             <p className="mt-4">
               You must be at least 18 years old, or the age of legal majority in
-              your location, to place an order. We do not knowingly sell to
+              your state, to place an order. We do not knowingly sell to
               children. If you use the Services for a company or another person,
               you confirm that you have authority to bind that person or entity.
+            </p>
+            <p className="mt-4">
+              You agree that we may provide notices, order confirmations, and
+              other records to you electronically, including by email or by
+              posting them on the Services, and that your electronic acceptance
+              of these Terms and of an order has the same legal effect as a
+              handwritten signature under the federal Electronic Signatures in
+              Global and National Commerce Act (E-SIGN) and applicable state
+              law.
             </p>
           </Section>
 
@@ -93,9 +104,11 @@ export default function TermsOfServicePage() {
               or fraud prevention.
             </p>
             <p className="mt-4">
-              Before payment, checkout will display the product price, quantity, applicable taxes or fees known to us, currency,
-              and total amount. You are responsible for reviewing these details
-              before submitting payment.
+              Prices are shown in U.S. dollars unless checkout states
+              otherwise. Before payment, checkout will display the product
+              price, quantity, applicable sales tax, shipping, and other fees
+              known to us, currency, and total amount. You are responsible for
+              reviewing these details before submitting payment.
             </p>
           </Section>
 
@@ -111,7 +124,7 @@ export default function TermsOfServicePage() {
               we will refund the amount paid to the original payment method.
             </p>
             <p className="mt-4">
-              Payments are processed by Flutterwave or another payment provider
+              Payments are processed by Stripe or another payment provider
               displayed at checkout. elimsclothing's does not request or store your full
               card number, CVV, PIN, or online-banking password. You must use a
               payment method that you are authorized to use. Suspected fraud may
@@ -120,7 +133,10 @@ export default function TermsOfServicePage() {
             <p className="mt-4">
               Your bank, card issuer, payment provider, or foreign-exchange
               provider may apply separate conversion fees or charges. Those
-              third-party charges are not controlled by elimsclothing's.
+              third-party charges are not controlled by elimsclothing's. Nothing
+              in these Terms limits any billing-dispute or chargeback rights you
+              have under federal law, such as the Fair Credit Billing Act, or
+              under your card issuer&apos;s rules.
             </p>
           </Section>
 
@@ -131,16 +147,21 @@ export default function TermsOfServicePage() {
               checkout. Delivery may take longer because of product preparation,
               courier delays, customs, public holidays, or events outside our
               reasonable control. We will provide shipping or tracking updates
-              where available.
+              where available. If we cannot ship within the time we stated, or
+              within 30 days if no time was stated, we will notify you and give
+              you the option to consent to the delay or cancel your order for a
+              prompt refund, as required by the Federal Trade Commission&apos;s
+              Mail, Internet, or Telephone Order Merchandise Rule.
             </p>
             <p className="mt-4">
-              For delivery outside Nigeria, the customer is the importer of
-              record and is responsible for providing accurate delivery and
-              customs information and paying import duties, customs charges,
-              destination taxes, brokerage charges, and other charges imposed by
-              the destination country unless checkout expressly states that
-              elimsclothing's has included them. We cannot guarantee that a destination
-              authority will not delay, inspect, or refuse a shipment.
+              For delivery outside the United States, the customer is the
+              importer of record and is responsible for providing accurate
+              delivery and customs information and paying import duties, customs
+              charges, destination taxes, brokerage charges, and other charges
+              imposed by the destination country unless checkout expressly
+              states that elimsclothing's has included them. We cannot guarantee
+              that a destination authority will not delay, inspect, or refuse a
+              shipment.
             </p>
           </Section>
 
@@ -160,7 +181,9 @@ export default function TermsOfServicePage() {
               inspection. Banks and payment providers may take an additional
               <strong> five to ten business days</strong>, and international
               transactions may take up to 15 business days, to display the
-              credit.
+              credit. This policy does not limit any refund, repair, or
+              replacement right you have under applicable federal or state law
+              for a defective, damaged, or materially misdescribed product.
             </p>
           </Section>
 
@@ -169,8 +192,9 @@ export default function TermsOfServicePage() {
               The elimsclothing's name, logos, designs, photographs, text, product
               descriptions, software, layouts, and other content are owned by or
               licensed to elimsclothing's and are protected by applicable intellectual
-              property laws. We grant you a limited, revocable, non-exclusive
-              right to use the Services for personal, lawful shopping purposes.
+              property laws, including U.S. copyright and trademark law. We grant
+              you a limited, revocable, non-exclusive right to use the Services
+              for personal, lawful shopping purposes.
             </p>
             <p className="mt-4">
               You must not copy, reproduce, republish, sell, scrape, reverse
@@ -183,22 +207,29 @@ export default function TermsOfServicePage() {
 
           <Section title="9. Disclaimers and liability">
             <p>
-              We will provide the Services with reasonable care and skill. To
-              the maximum extent permitted by applicable law, we do not warrant
-              that the website will always be uninterrupted, error-free, or free
-              of harmful components, and we are not responsible for failures
-              caused by internet providers, banks, payment processors, couriers,
-              customs authorities, or other third parties.
+              We will provide the Services with reasonable care and skill. TO
+              THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE WEBSITE IS
+              PROVIDED &ldquo;AS IS&rdquo; AND &ldquo;AS AVAILABLE,&rdquo; and
+              we do not warrant that it will always be uninterrupted,
+              error-free, or free of harmful components. We are not responsible
+              for failures caused by internet providers, banks, payment
+              processors, couriers, customs authorities, or other third
+              parties.
             </p>
             <p className="mt-4">
               Nothing in these Terms excludes or limits liability that cannot be
               excluded or limited under applicable law, including liability for
-              fraud, fraudulent misrepresentation, death or personal injury
-              caused by negligence, or your statutory consumer rights. Subject
-              to that limitation, elimsclothing's will not be liable for indirect,
+              fraud, fraudulent misrepresentation, gross negligence, willful
+              misconduct, death or personal injury caused by negligence, or your
+              non-waivable consumer rights under federal and state law. Subject
+              to that limitation, and TO THE MAXIMUM EXTENT PERMITTED BY
+              APPLICABLE LAW, elimsclothing's will not be liable for indirect,
               incidental, special, or consequential losses. Our total liability
               for a claim connected with an order will not exceed the amount you
-              paid for that order.
+              paid for that order. Some states do not allow the exclusion of
+              certain implied warranties or the limitation of incidental or
+              consequential damages, so some of these limits may not apply to
+              you, and you may have other rights that vary by state.
             </p>
           </Section>
 
@@ -227,18 +258,21 @@ export default function TermsOfServicePage() {
 
           <Section title="12. Governing law and contact">
             <p>
-              These Terms are governed by the laws of the Federal Republic of
-              Nigeria, without prejudice to mandatory consumer protections that
-              apply in your country of residence. The parties will first attempt
-              in good faith to resolve a dispute through customer support. If it
-              is not resolved, either party may seek relief from a court of
-              competent jurisdiction in Nigeria or another forum required by
-              mandatory law.
+              These Terms are governed by the laws of the State of{" "}
+              {GOVERNING_STATE} and applicable United States federal law,
+              without regard to conflict-of-law rules and without prejudice to
+              mandatory consumer protections that apply in your state of
+              residence. The parties will first attempt in good faith to resolve
+              a dispute through customer support. If it is not resolved, either
+              party may seek relief from the state or federal courts located in
+              the State of {GOVERNING_STATE}, or from a small-claims court of
+              competent jurisdiction, or another forum required by mandatory
+              law.
             </p>
             <p className="mt-4">
               Legal notices and customer-support requests should be sent to:
               <br />
-              <strong>KG LUXEE LIMITED</strong>
+              <strong>ELIMS CLOTHING'S LLC</strong>
               <br />
               {BUSINESS_ADDRESS}
               <br />

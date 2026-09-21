@@ -10,8 +10,8 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = "21 August 2026";
-const SUPPORT_EMAIL = "hello@Elims Clothing's.com";
-const SUPPORT_PHONE = "+14314588817";
+const SUPPORT_EMAIL = "hello@elimselothings.store";
+const SUPPORT_PHONE = "+1";
 
 export default function RefundPolicyPage() {
   return (

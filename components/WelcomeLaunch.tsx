@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 
-const STORAGE_KEY_SESSION_DISMISS = "kgluxe_popup_dismissed_session";
+const STORAGE_KEY_SESSION_DISMISS = "elimsclothing_popup_dismissed_session";
 
 export default function WelcomeLaunchPopup() {
   const [visible, setVisible] = useState(false);
@@ -56,7 +56,7 @@ export default function WelcomeLaunchPopup() {
         <div className="relative h-72 w-full">
           <Image
             src="/ceo.jpeg"
-            alt="Founder & CEO of KgLuxe"
+            alt="Founder & CEO of Elims Clothing's"
             fill
             className="object-cover object-top opacity-90"
             priority

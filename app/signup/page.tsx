@@ -109,7 +109,7 @@ export default function SignupPage() {
         // Auth succeeded, so still continue — just log it
         }
 
-        toast.success("Account created successfully! Welcome to KgLuxe 🎉");
+        toast.success("Account created successfully! Welcome to Elims Clothing's 🎉");
         router.push("/");
 
     } catch (err) {

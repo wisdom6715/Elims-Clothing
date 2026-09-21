@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { auth } from "@/lib/firebase.config";
 import Image from "next/image";
+import DiscountBanner from "./DiscountBanner";
 
 const navItems = [
   { label: "Collections", href: "/#collections" },
@@ -44,7 +45,9 @@ export default function Header() {
   }, [menuOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#dce0d6] bg-[#faf9f4]/95 backdrop-blur">
+    <>
+      <DiscountBanner />
+      <header className="sticky top-0 z-50 border-b border-[#dce0d6] bg-[#faf9f4]/95 backdrop-blur">
       <div className="store-shell flex h-16 items-center justify-between lg:h-20">
         
         {/* LOGO - LEFT */}
@@ -179,5 +182,6 @@ export default function Header() {
         </div>
       )}
     </header>
+    </>
   );
 }

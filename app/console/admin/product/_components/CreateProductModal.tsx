@@ -14,7 +14,6 @@ import { X, ChevronDown, Check, ImagePlus, Loader2 } from "lucide-react";
 import { db, storage } from "@/lib/firebase.config";
 import {
   CATEGORIES,
-  SUBCATEGORIES,
   SIZES,
   COLORS,
   getColorHex,
@@ -119,10 +118,6 @@ export default function CreateProductModal({
 
   if (!isOpen) return null;
 
-  const subCategoryOptions = form.category
-    ? SUBCATEGORIES[form.category as CategoryValue]
-    : [];
-
   const handleFilesSelect = (fileList: FileList | null) => {
     if (!fileList || fileList.length === 0) return;
     const incoming = Array.from(fileList);
@@ -192,7 +187,6 @@ export default function CreateProductModal({
     if (form.sizes.length === 0) return "Select at least one size.";
     if (form.colors.length === 0) return "Select at least one color.";
     if (!form.category) return "Select a category.";
-    if (!form.subCategory) return "Select a subcategory.";
     if (!form.description.trim()) return "Description is required.";
     return "";
   };
@@ -253,7 +247,6 @@ export default function CreateProductModal({
         sizes: form.sizes,
         colors: form.colors,
         category: form.category,
-        subCategory: form.subCategory,
         imageUrls: finalUrls,
         imagePaths: finalPaths,
         sizePricing,
@@ -607,16 +600,6 @@ export default function CreateProductModal({
               onSelect={(v) =>
                 setForm((f) => ({ ...f, category: v as CategoryValue, subCategory: "" }))
               }
-            />
-            <SingleSelectDropdown
-              label="SUBCATEGORY"
-              placeholder={form.category ? "Select subcategory" : "Pick a category first"}
-              options={subCategoryOptions.map((s) => ({ value: s, label: s }))}
-              selected={form.subCategory}
-              isOpen={openDropdown === "subCategory"}
-              disabled={!form.category}
-              onToggleOpen={() => setOpenDropdown((d) => (d === "subCategory" ? null : "subCategory"))}
-              onSelect={(v) => setForm((f) => ({ ...f, subCategory: v }))}
             />
           </div>
 

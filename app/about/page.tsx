@@ -1,384 +1,77 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Playfair_Display, Inter } from "next/font/google";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  style: ["normal", "italic"],
-  weight: ["400", "500", "600"],
-});
+const images = {
+  atelier:
+    "https://files.manuscdn.com/search-media/310519663942355207/6LgafaxYasXCKPqSeT7JFm/ughTsHWJkCBEUMtGNjvC7N.jpg",
+  founder:
+    "https://files.manuscdn.com/search-media/310519663942355207/6LgafaxYasXCKPqSeT7JFm/abndqCuYB4k8kk5mt9fzrB.jpg",
+  textile:
+    "https://files.manuscdn.com/search-media/310519663942355207/6LgafaxYasXCKPqSeT7JFm/bPKuEDE3NJwVzGXSypCgoN.jpg",
+};
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["300", "400", "500", "600"],
-});
+const principles = [
+  ["01", "SILHOUETTE", "The confidence of a perfectly crafted silhouette."],
+  ["02", "ANCESTRY", "The beauty of a fabric rich with history."],
+  ["03", "VIBRANCY", "The vibrancy of Ankara transformed into contemporary elegance."],
+  ["04", "GENERATIONS", "The charm of beautifully dressed little ones."],
+  ["05", "PRECISION", "The elegance of thoughtful details."],
+  ["06", "IDENTITY", "The quiet power of wearing something that reflects your individuality."],
+] as const;
 
-/**
- * Simple scroll-reveal hook.
- * Adds `.in` to any element with the `data-fade` attribute once it enters the viewport.
- * Respects prefers-reduced-motion by doing nothing (elements are visible by default via CSS).
- */
-function useFadeUp() {
-  const rootRef = useRef<HTMLDivElement>(null);
+const inspiration = [
+  ["A story of culture", "Every collection begins with a place, a memory, a detail worth carrying forward."],
+  ["A story of craft", "The hands behind every stitch make the finished piece feel human, considered, and alive."],
+  ["A story of today", "We bring heritage into the present with a point of view that feels quietly modern."],
+] as const;
 
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-
-    const els = root.querySelectorAll<HTMLElement>("[data-fade]");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("in");
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  return rootRef;
+function Eyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return (
+    <div className={`flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.24em] ${light ? "text-[#e9dfcb]/75" : "text-[#796f62]"}`}>
+      <span className={`h-px w-8 ${light ? "bg-[#d4b77c]/65" : "bg-[#c7b9a0]"}`} />
+      {children}
+    </div>
+  );
 }
 
-const WHY_CHOOSE = [
-  {
-    title: "Premium Quality",
-    copy: "Uncompromising standards in every stitch.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M8.5 12.5l2.2 2.2L16 9.5" />
-      </>
-    ),
-  },
-  {
-    title: "Timeless Elegance",
-    copy: "Designs that transcend seasonal trends.",
-    icon: (
-      <>
-        <path d="M12 3l1.8 4.6L18 9.4l-4.2 1.8L12 16l-1.8-4.8L6 9.4l4.2-1.8L12 3z" />
-        <path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z" />
-      </>
-    ),
-  },
-  {
-    title: "Exclusive Designs",
-    copy: "Limited edition pieces for a unique identity.",
-    icon: <path d="M12 2l3 5 5 1-4 4 1 5-5-3-5 3 1-5-4-4 5-1z" />,
-  },
-  {
-    title: "Expert Tailoring",
-    copy: "Artisanal precision in every garment.",
-    icon: (
-      <>
-        <circle cx="7" cy="6" r="2.4" />
-        <circle cx="7" cy="18" r="2.4" />
-        <path d="M20 6L9 17M12.5 14.5L20 18" />
-      </>
-    ),
-  },
-  {
-    title: "Intl Size Guide",
-    copy: "Seamless fit selection for global clients.",
-    icon: (
-      <>
-        <rect x="3" y="6" width="18" height="12" rx="1.5" />
-        <path d="M3 9h18M7 14h3" />
-      </>
-    ),
-  },
-  {
-    title: "Luxury Packaging",
-    copy: "An unboxing experience that mirrors our craft.",
-    icon: (
-      <>
-        <path d="M4 8l8-4 8 4-8 4-8-4z" />
-        <path d="M4 8v8l8 4 8-4V8" />
-        <path d="M12 12v8" />
-      </>
-    ),
-  },
-  {
-    title: "Worldwide Shipping",
-    copy: "Bringing Elims Clothing's to your doorstep anywhere.",
-    icon: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M3 12h18M12 3c2.4 2.6 3.6 5.7 3.6 9s-1.2 6.4-3.6 9c-2.4-2.6-3.6-5.7-3.6-9S9.6 5.6 12 3z" />
-      </>
-    ),
-  },
-  {
-    title: "Exceptional Service",
-    copy: "Dedicated support for your luxury journey.",
-    icon: <path d="M12 21s-7-4.6-9.3-9A5.4 5.4 0 0112 6.5 5.4 5.4 0 0121.3 12c-2.3 4.4-9.3 9-9.3 9z" />,
-  },
-];
+function Paper({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <div className={`bg-[#fbfaf6] shadow-[0_12px_28px_rgba(69,57,40,0.06)] ${className}`}>{children}</div>;
+}
 
-const QUALITY_POINTS = [
-  {
-    n: "01",
-    title: "Premium Fabrics",
-    copy: "Sourcing superior silks, linens, and fine-woven textiles for longevity and comfort.",
-  },
-  {
-    n: "02",
-    title: "Expert Craftsmanship",
-    copy: "Each piece is hand-finished by master tailors with decades of experience in high-fashion construction.",
-  },
-  {
-    n: "03",
-    title: "Precision Tailoring",
-    copy: "Focusing on the architecture of the garment to ensure a perfect fit for diverse silhouettes.",
-  },
-];
-
-
-export default function AboutPage() {
-  const rootRef = useFadeUp();
-
+export default function ElimsAboutPage() {
   return (
-    <div
-      ref={rootRef}
-      className={`${playfair.variable} ${inter.variable} font-sans bg-[#faf9f6] text-[#161513] antialiased`}
-    >
-      <style jsx global>{`
-        .font-serif {
-          font-family: var(--font-serif), serif;
-        }
-        [data-fade] {
-          opacity: 0;
-          transform: translateY(18px);
-          transition: opacity 0.7s ease, transform 0.7s ease;
-        }
-        [data-fade].in {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        @media (prefers-reduced-motion: reduce) {
-          [data-fade] {
-            opacity: 1;
-            transform: none;
-            transition: none;
-          }
-        }
-      `}</style>
+    <div className="min-h-screen overflow-x-hidden bg-[#f8f7f2] text-[#24302a] [font-family:Arial,sans-serif]">
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600&display=swap'); .elims-serif{font-family:'Cormorant Garamond',Georgia,serif}.elims-sans{font-family:'DM Sans',Arial,sans-serif}`}</style>
 
-      {/* ============ HEADER ============ */}
-      <Header />
-
-      <main>
-        {/* ============ HERO ============ */}
-        <section className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 pt-12 md:pt-20 pb-16 md:pb-24">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div data-fade className="order-2 lg:order-1">
-              <p className="tracking-[0.14em] uppercase text-[11px] text-[#6b6860] mb-5">
-                Established Craftsmanship
-              </p>
-              <h1 className="font-serif text-5xl sm:text-6xl md:text-7xl leading-[0.98] mb-7">
-                About
-                <br />
-                Elims Clothing's
-              </h1>
-              <p className="text-[15px] leading-relaxed text-[#6b6860] max-w-md mb-8">
-                Founded on a passion for understated elegance, Elims Clothing's is a sanctuary for those who seek the
-                extraordinary in the everyday. Our narrative is woven from threads of quality, precision, and an
-                unwavering commitment to timeless style.
-              </p>
-              <Link
-                href="/products/all"
-                className="inline-flex items-center gap-2 text-xs tracking-[0.14em] uppercase border-b border-[#161513] pb-1 group"
-              >
-                Explore Collections
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.5}
-                  className="transition-transform group-hover:translate-x-1"
-                >
-                  <path d="M5 12h14M13 6l6 6-6 6" />
-                </svg>
-              </Link>
-            </div>
-
-            <div data-fade className="order-1 lg:order-2 relative">
-              <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#efeee9]">
-                <Image
-                  src="/images/about1.jpg"
-                  alt="A woman in a cream draped dress standing in a minimalist gallery space"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              <div className="absolute -bottom-8 -left-4 sm:-left-8 w-28 sm:w-36 md:w-44 aspect-square bg-white p-2 shadow-xl">
-                <div className="relative w-full h-full overflow-hidden">
-                  <Image
-                    src="/images/fabrics.png"
-                    alt="Close-up detail of hand-finished tailoring stitchwork"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            </div>
+    <Header />
+      <main id="top">
+        <section id="about" className="mx-auto max-w-[1440px] px-5 pb-20 pt-24 sm:px-8 lg:px-12 lg:pb-36 lg:pt-36">
+          <div className="grid items-start gap-14 lg:grid-cols-[1.45fr_0.55fr] lg:gap-20">
+            <div><Eyebrow>HERITAGE &amp; SOUL</Eyebrow><h1 className="elims-serif mt-7 max-w-[950px] text-[clamp(3.5rem,6vw,8.4rem)] leading-[0.84] tracking-[-0.055em] text-[#004d3b]">About Elims Clothings —<br /><em>Where Heritage Meets Luxury</em></h1><p className="elims-serif mt-10 max-w-[650px] text-[clamp(1.35rem,2.2vw,2.45rem)] leading-[1.12] text-[#6c6256]">Elims Clothings is a celebration of African heritage, timeless elegance, and exceptional craftsmanship.</p></div>
+            <Paper className="mt-2 p-7 sm:p-9 lg:mt-4"><Eyebrow>COUTURE MONOGRAPH</Eyebrow><p className="elims-sans mt-7 text-[15px] leading-7 text-[#5f5c56]">Artisanal provenance, measured proportion, and ancestral textiles re-engineered into global silhouettes of effortless prestige.</p><div className="elims-sans mt-10 flex items-center gap-4 text-[10px] font-semibold tracking-[0.18em] text-[#756c60]"><span>EST. 2024</span><i>•</i><span>NIGERIAN COUTURE</span></div></Paper>
+          </div>
+          <div className="mt-24 grid items-start gap-12 lg:mt-32 lg:grid-cols-[1.03fr_0.97fr] lg:gap-20">
+            <figure><div className="aspect-[0.87] overflow-hidden bg-[#d9c7ad]"><img src={images.atelier} alt="African artisan at work in a textile studio" className="h-full w-full object-cover" /></div><figcaption className="relative z-10 -mt-16 ml-6 mr-6 bg-[#fbfaf6] px-5 py-4 shadow-[0_12px_28px_rgba(69,57,40,0.06)] sm:ml-12 sm:mr-20"><Eyebrow>ATELIER COMPOSITION</Eyebrow><p className="elims-sans mt-2 text-sm">Lagos Workshop Study No. IV</p><p className="elims-sans mt-1 text-[10px] uppercase tracking-[0.15em] text-[#8a8175]">Handcrafted</p></figcaption></figure>
+            <div className="pt-2 lg:pt-14"><Eyebrow>THE FOUNDATION</Eyebrow><div className="elims-sans mt-8 space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Born from a deep appreciation for culture, artistry, and refined style, Elims Clothings creates distinctive fashion for women, men, and children who appreciate pieces that are both meaningful and unforgettable.</p><p>Our designs bring together the richness of African textiles—including the intricate artistry of Adire, the regal beauty of Aso-Oke, and the vibrant character of Ankara—with contemporary silhouettes and sophisticated finishing.</p><p>Our ready-to-wear collections are designed for those moments when elegance should feel effortless. Carefully selected fabrics, flattering silhouettes, refined details, and distinctive prints come together in pieces that can be worn, loved, and remembered.</p></div><div className="mt-10 grid grid-cols-3 divide-x divide-[#d9d1c3]">{[["100%", "Ethical Looming"], ["Limited", "Bespoke Editions"], ["3 Gen", "Family & Heirloom"]].map(([value, label]) => <div key={value} className="px-4 first:pl-0 last:pr-0"><p className="elims-serif text-3xl leading-none text-[#0e5a48]">{value}</p><p className="elims-sans mt-2 text-[9px] uppercase tracking-[0.14em] text-[#756c60]">{label}</p></div>)}</div></div>
           </div>
         </section>
 
-        {/* ============ PROMISE QUOTE BAND ============ */}
-        <section data-fade className="bg-[#efeee9] border-y border-[#dedad2] py-16 md:py-20 mt-10 md:mt-16">
-          <div className="max-w-3xl mx-auto px-6 text-center">
-            <p className="font-serif italic text-2xl sm:text-3xl md:text-4xl leading-snug mb-4">
-              Luxury in Every Detail
-            </p>
-            <p className="tracking-[0.08em] uppercase text-[11px] text-[#6b6860]">The Elims Clothing's Promise</p>
-          </div>
-        </section>
+        <section id="craft" className="bg-[#f0ede5] px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><div className="mx-auto grid max-w-[1320px] gap-14 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20"><div><Eyebrow>PHILOSOPHY</Eyebrow><h2 className="elims-serif mt-7 max-w-[500px] text-[clamp(3rem,5vw,5.6rem)] leading-[0.92] tracking-[-0.05em] text-[#004d3b]">Craftsmanship &amp; Our Definition of Luxury</h2><p className="elims-sans mt-8 max-w-[500px] text-[16px] leading-7 text-[#595b55]">At the heart of Elims Clothings is an unwavering commitment to craftsmanship, quality, and detail. Each piece is created with intention—celebrating beautiful fabrics, elegant finishes, distinctive design, and the confidence that comes from wearing something truly special.</p><Paper className="mt-9 max-w-[500px] p-6 sm:p-8"><p className="elims-serif text-[clamp(1.7rem,2.7vw,2.6rem)] italic leading-[1.02] text-[#17634f]">“We believe luxury is not simply about what you wear. It is about how it makes you feel.”</p></Paper></div><div className="grid gap-5 sm:grid-cols-2">{principles.map(([number, title, copy]) => <Paper key={number} className="flex min-h-[190px] flex-col justify-between p-6 transition-transform duration-200 hover:-translate-y-1 sm:min-h-[210px] sm:p-8"><p className="elims-sans text-[10px] font-semibold tracking-[0.18em] text-[#81786d]">{number} — {title}</p><p className="elims-serif max-w-[290px] text-[clamp(1.35rem,2vw,2rem)] leading-[1.08] text-[#2c342f]">{copy}</p></Paper>)}</div></div></section>
 
-        {/* ============ WHO IS Elims Clothing's ============ */}
-        <section className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 md:py-24">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
-            <div data-fade>
-              <h2 className="font-serif text-3xl sm:text-4xl mb-6">Who is Elims Clothing's?</h2>
-              <p className="text-[15px] leading-relaxed text-[#6b6860] mb-5">
-                Elims Clothing's is more than a fashion house; it is a manifestation of modern femininity. We specialize in
-                the curation and creation of tailored dresses, kaftans, boubous, and abayas that resonate with the
-                global woman.
-              </p>
-              <p className="text-[15px] leading-relaxed text-[#6b6860]">
-                Our resort wear collections are inspired by the intersection of traditional silhouettes and
-                contemporary design. Every piece we create is an homage to the timeless fashion that allows our
-                clients to move through the world with effortless grace.
-              </p>
-            </div>
+        <section className="px-5 py-20 sm:px-8 sm:py-28 lg:px-12 lg:py-36"><div className="mx-auto max-w-[1320px] bg-[#075541] px-6 py-20 text-center text-[#f7f3e9] sm:px-14 sm:py-28 lg:px-24 lg:py-36"><Eyebrow light>OUR VISION &amp; ESSENCE</Eyebrow><p className="elims-serif mx-auto mt-9 max-w-[1100px] text-[clamp(1.5rem,3.2vw,4.6rem)] leading-[0.94] tracking-[-0.04em]">To establish Elims Clothings as a globally respected luxury fashion house, renowned for celebrating African artistry through exceptional craftsmanship, contemporary elegance, and timeless design.</p><div className="elims-sans mt-12 flex flex-wrap justify-center gap-x-5 gap-y-3 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#d4b77c]"><span>Heritage</span><i>•</i><span>Craftsmanship</span><i>•</i><span>Elegance</span><i>•</i><span>Luxury</span></div><p className="elims-serif mt-12 text-[clamp(1.4rem,2.2vw,2.3rem)] italic leading-tight text-[#e9dfcb]">“Welcome to Elims Clothings, Where culture is honoured, elegance is elevated, and every piece tells a story.”</p></div></section>
 
-            <div data-fade className="grid sm:grid-cols-2 gap-10 lg:gap-8">
-              <div>
-                <p className="tracking-[0.14em] uppercase text-[11px] text-[#6b6860] mb-3">Our Vision</p>
-                <p className="text-[15px] leading-relaxed">
-                  To emerge as a globally recognized emblem of luxury, defining the standard for premium
-                  craftsmanship and sophisticated design within the modest and resort wear markets.
-                </p>
-              </div>
-              <div>
-                <p className="tracking-[0.14em] uppercase text-[11px] text-[#6b6860] mb-3">Our Mission</p>
-                <p className="text-[15px] leading-relaxed">
-                  Committed to delivering timeless pieces through the marriage of premium quality materials and
-                  exceptional service. We strive to empower our community through precision tailoring and an
-                  unparalleled luxury experience.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <section id="letter" className="mx-auto grid max-w-[1320px] gap-12 px-5 pb-24 sm:px-8 sm:pb-32 lg:grid-cols-[0.55fr_1.1fr] lg:gap-20 lg:px-12"><div><figure><div className="aspect-[0.82] overflow-hidden bg-[#b9aa96]"><img src={images.founder} alt="Creative director seated in the atelier" className="h-full w-full object-cover" /></div><figcaption className="relative z-10 -mt-14 mx-5 bg-[#fbfaf6] p-5 shadow-[0_12px_28px_rgba(69,57,40,0.06)] sm:mx-8 sm:p-7"><Eyebrow>CREATIVE DIRECTOR &amp; FOUNDER</Eyebrow><p className="elims-serif mt-2 text-2xl leading-none text-[#1d342b]">Olubukola Salako</p><p className="elims-sans mt-3 text-[10px] uppercase tracking-[0.2em] text-[#7a7166]">Elims Clothings</p></figcaption></figure><div className="mt-5 bg-[#f0ede5] p-6 sm:p-8"><Eyebrow>CREED</Eyebrow><p className="elims-serif mt-4 text-xl italic leading-tight text-[#5f625a]">“Woven with Heritage. Designed with Purpose. Created to Leave a Legacy.”</p></div></div><article><Paper className="p-7 sm:p-12 lg:p-16"><div className="flex items-center justify-between gap-5"><Eyebrow>FROM THE FOUNDER</Eyebrow><span className="elims-sans text-[10px] tracking-[0.2em] text-[#857b6d]">LETTER NO. 01</span></div><h2 className="elims-serif mt-8 text-[clamp(3rem,5vw,5.2rem)] leading-[0.9] tracking-[-0.045em] text-[#005440]">A Letter from My Heart</h2><p className="elims-serif mt-8 text-3xl text-[#005440]">Dear Friend,</p><div className="elims-sans mt-5 space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Welcome to Elims Clothings.</p><p>Before you discover our fabrics and designs, I want to share the heart behind this brand.</p><p className="font-medium italic text-[#075541]">Elims is a dream that never truly left me.</p><p>Born from my love for fashion, beauty, and African heritage, Elims represents my desire to create something meaningful—something that honours where we come from while embracing the elegance of the modern world.</p><p>The journey has not always been straightforward. There were seasons when life required me to pause and focus on other responsibilities, and moments when the path ahead was uncertain. Yet, through it all, the vision of Elims remained in my heart.</p></div><div className="my-8 bg-[#f0ede5] px-6 py-5 elims-sans text-[15px] leading-7 text-[#343a35]">That journey taught me something I deeply believe: a dream connected to purpose may pause, but it does not have to disappear.</div><div className="elims-sans space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Inspired by the artistry and stories woven into Adire, Ankara, and Aso-Oke, Elims was created to celebrate the richness of our heritage through refined, timeless designs.</p><p>At the heart of Elims is also a desire to create legacy.</p><p className="font-medium text-[#075541]">And now, I would love to personally invite you to be part of my journey.</p></div><p className="elims-serif mt-10 text-[clamp(1.8rem,3.1vw,3.4rem)] leading-[1.03] text-[#075541]">So, from one heart to another, I invite you to come with me.<br />Come and celebrate where we come from.<br />Come and embrace the beauty of who you are.<br />Come and be part of a story that is still being written.</p><div className="mt-12"><p className="elims-sans text-sm italic text-[#857b6d]">With all my heart and gratitude,</p><p className="elims-serif mt-2 text-3xl text-[#075541]">Olubukola Salako</p><p className="elims-sans mt-3 text-[10px] font-semibold tracking-[0.2em] text-[#075541]">FOUNDER & CEO, ELIMS CLOTHINGS</p></div></Paper></article></section>
 
-        {/* ============ COMMITMENT TO QUALITY (dark) ============ */}
-        <section data-fade className="bg-[#161513] text-[#faf9f6] py-16 md:py-24">
-          <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              <div className="relative w-full aspect-[4/5] sm:aspect-[3/4] lg:aspect-auto lg:h-[520px] overflow-hidden bg-neutral-800 order-1">
-                <Image
-                  src="/images/about2.jpg"
-                  alt="A black satin slip dress hanging on a rail"
-                  fill
-                  className="object-cover"
-                />
-              </div>
+        <section id="story" className="bg-[#f0ede5] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"><div className="mx-auto max-w-[1320px]"><Eyebrow>GENESIS &amp; PURPOSE</Eyebrow><h2 className="elims-serif mt-7 max-w-[1060px] text-[clamp(3.1rem,5.7vw,6.8rem)] leading-[0.9] tracking-[-0.055em] text-[#005440]">The Elims Story — A Dream Woven with Purpose, Heritage and Passion</h2><p className="elims-serif mt-6 text-2xl italic text-[#17634f] sm:text-4xl">“Every great story begins with a dream.”</p><div className="mt-20 grid items-start gap-14 lg:grid-cols-[1fr_0.76fr] lg:gap-24"><div><div className="elims-sans space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Elims Clothings was born from a deep love for fashion, culture, creativity, and the timeless beauty of African heritage. What began as a passion for beautiful clothing has grown into a vision—one that celebrates where we come from while embracing the limitless possibilities of where we are going.</p><p>For the founder of Elims Clothings, fashion has always been more than fabric and design. It is a language. It tells stories without words. It carries memories, expresses identity, and has the power to make a person feel confident, beautiful, and seen.</p><p>Inspired by the richness of African artistry, Elims Clothings draws from the beauty of traditional fabrics such as Adire, Ankara and Aso-Oke, reimagining them through a contemporary and refined lens.</p></div><Paper className="mt-8 p-6"><Eyebrow>ARTISANAL LOOM DOCUMENTATION</Eyebrow><p className="elims-sans mt-3 text-sm leading-6 text-[#565b54]">Every strip of hand-woven Aso-Oke is pulled on narrow heritage looms by artisan guilds who have preserved the art across generations.</p></Paper></div><figure><div className="aspect-[0.9] overflow-hidden bg-[#bca98f]"><img src={images.textile} alt="Textile details in an atelier" className="h-full w-full object-cover" /></div><figcaption className="relative z-10 -mt-12 mx-5 bg-[#fbfaf6] p-5 shadow-[0_12px_28px_rgba(69,57,40,0.06)] sm:mx-10 sm:p-7"><Eyebrow>LOOM ARTIFACT</Eyebrow><p className="elims-serif mt-2 text-2xl text-[#183a2f]">Ancestral weft &amp; warp craftsmanship</p></figcaption></figure></div></div></section>
 
-              <div className="order-2">
-                <h2 className="font-serif text-4xl sm:text-5xl leading-tight mb-6">
-                  Commitment
-                  <br />
-                  to Quality
-                </h2>
-                <p className="text-[15px] leading-relaxed text-neutral-400 max-w-md mb-10">
-                  At the heart of Elims Clothing's lies a relentless pursuit of perfection. We source only the most exquisite
-                  fabrics from around the world, ensuring that every garment feels as extraordinary as it looks.
-                </p>
+        <section id="collections" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"><div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-24"><div><Eyebrow>OUR INSPIRATION</Eyebrow><h2 className="elims-serif mt-7 max-w-[730px] text-[clamp(3rem,5.2vw,6rem)] leading-[0.9] tracking-[-0.05em] text-[#005440]">Inspired by Heritage. Created for a Wider World.</h2><div className="elims-sans mt-10 max-w-[680px] space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Elims Clothings is inspired by the richness of African culture and the limitless possibilities of fashion.</p><p>We believe heritage is not something to preserve behind glass. It is something to carry, translate, and make feel alive.</p></div><p className="elims-serif mt-10 max-w-[700px] text-[clamp(1.65rem,2.8vw,3rem)] italic leading-tight text-[#17634f]">“At Elims, we find inspiration in the elegance of African culture, the vibrancy of our communities, the strength of family, and the beauty of self-expression.”</p></div><div className="grid gap-5">{inspiration.map(([title, copy], index) => <Paper key={title} className="p-6 sm:p-7"><span className="elims-sans text-[10px] font-semibold tracking-[0.18em] text-[#b28b4c]">0{index + 1}</span><h3 className="elims-serif mt-4 text-2xl text-[#075541]">{title}</h3><p className="elims-sans mt-3 text-sm leading-6 text-[#62645d]">{copy}</p></Paper>)}</div></div><div className="mt-20 border-y border-[#d9d1c3] py-16 text-center sm:mt-28 sm:py-24"><p className="elims-serif mx-auto max-w-[1080px] text-[clamp(2rem,4vw,4.8rem)] leading-[0.98] tracking-[-0.035em] text-[#075541]">“We believe luxury is not simply about what you wear. It is about how it makes you feel.”</p></div></section>
 
-                <ol className="divide-y divide-neutral-700 border-t border-neutral-700">
-                  {QUALITY_POINTS.map((point) => (
-                    <li key={point.n} className="py-6 grid grid-cols-[auto_1fr] gap-5 sm:gap-8">
-                      <span className="font-serif italic text-2xl text-neutral-500">{point.n}</span>
-                      <div>
-                        <p className="tracking-[0.08em] uppercase text-xs mb-2">{point.title}</p>
-                        <p className="text-sm text-neutral-400 leading-relaxed">{point.copy}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ============ WHY CHOOSE Elims Clothing's ============ */}
-        <section data-fade className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-16 md:py-24">
-          <div className="text-center mb-14">
-            <h2 className="font-serif text-3xl sm:text-4xl mb-4">Why Choose Elims Clothing's</h2>
-            <span className="inline-block w-12 h-px bg-[#161513]" />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12 md:gap-y-14 text-center">
-            {WHY_CHOOSE.map((item) => (
-              <div key={item.title}>
-                <svg
-                  className="mx-auto mb-4"
-                  width="30"
-                  height="30"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={1.3}
-                >
-                  {item.icon}
-                </svg>
-                <p className="tracking-[0.08em] uppercase text-xs mb-2">{item.title}</p>
-                <p className="text-xs text-[#6b6860] leading-relaxed">{item.copy}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ============ CTA BANNER ============ */}
-        <section data-fade className="relative overflow-hidden py-24 md:py-36">
-          <Image src="/images/abaya.png" alt="" fill aria-hidden className="object-cover opacity-15" />
-          <div className="absolute inset-0 bg-[#faf9f649]" />
-          <div className="relative max-w-2xl mx-auto px-6 text-center">
-            <h2 className="font-serif italic text-3xl sm:text-4xl md:text-5xl leading-snug mb-6">
-              &ldquo;Look elegant. Feel confident.&rdquo;
-            </h2>
-            <p className="text-[15px] text-[#6b6860] leading-relaxed mb-9 max-w-lg mx-auto">
-              Our final promise to you is simple: a Elims Clothing's piece is an investment in your self-expression. We
-              invite you to experience the harmony of comfort and couture.
-            </p>
-            <Link
-              href="/products/all"
-              className="inline-block bg-[#161513] text-[#faf9f6] text-xs tracking-[0.14em] uppercase px-8 py-4 hover:bg-neutral-800 transition-colors"
-            >
-              Discover the Collection
-            </Link>
-          </div>
-        </section>
+        <section className="px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12 lg:pb-36"><div className="mx-auto max-w-[1320px] bg-[#075541] px-6 py-20 text-center sm:px-14 sm:py-28 lg:px-24 lg:py-32"><Eyebrow light>THE NEXT CHAPTER</Eyebrow><h2 className="elims-serif mx-auto mt-8 max-w-[940px] text-[clamp(3.2rem,6vw,7rem)] leading-[0.88] tracking-[-0.05em] text-[#f7f3e9]">Heritage Reimagined.<br /><em>Elegance Elevated.</em></h2><p className="elims-sans mx-auto mt-8 max-w-[550px] text-sm leading-6 text-[#d9ddcf]">Explore the collections created for a life beautifully lived—pieces with memory in every thread and possibility in every silhouette.</p></div></section>
       </main>
-
-      {/* ============ FOOTER ============ */}
       <Footer />
+
     </div>
   );
 }

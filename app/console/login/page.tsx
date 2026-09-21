@@ -231,7 +231,7 @@ export default function LoginPage() {
                 <rect x="2" y="11" width="7" height="7" rx="1" />
               </svg>
             </div>
-            <span className="text-2xl font-bold text-white tracking-wider">KgLuxe</span>
+            <span className="text-2xl font-bold text-white tracking-wider">Elims Clothing's</span>
             <div className="w-px h-8 bg-white/30 mx-1" />
             <span className="text-white/80 text-sm font-light leading-tight">
               Home of premium<br />Designs
