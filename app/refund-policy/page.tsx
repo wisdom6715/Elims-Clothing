@@ -4,14 +4,13 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Refund and Return Policy — Elims Clothing's",
+  title: "Return & Exchange Policy — Elims Clothing's",
   description:
-    "Clear return eligibility, return authorization, refund processing, and international-order terms for Elims Clothing's.",
+    "Return window, store credit terms, item condition requirements, final sale exclusions, and return shipping information for Elims Clothing's.",
 };
 
 const EFFECTIVE_DATE = "21 August 2026";
 const SUPPORT_EMAIL = "hello@elimselothings.store";
-const SUPPORT_PHONE = "+1";
 
 export default function RefundPolicyPage() {
   return (
@@ -23,10 +22,10 @@ export default function RefundPolicyPage() {
             CUSTOMER PROTECTION
           </p>
           <h1 className="font-serif text-5xl text-neutral-900 sm:text-6xl">
-            Refund and Return Policy
+            Return & Exchange Policy
           </h1>
           <p className="mt-5 text-xs font-medium tracking-[0.1em] text-neutral-500">
-            EFFECTIVE: {EFFECTIVE_DATE} · VERSION 3.0
+            EFFECTIVE: {EFFECTIVE_DATE}
           </p>
         </header>
 
@@ -36,211 +35,119 @@ export default function RefundPolicyPage() {
           </h2>
           <ol className="list-decimal space-y-3 pl-5 text-[15px] leading-relaxed text-neutral-700">
             <li>
-              Contact customer support immediately and no later than
-              <strong> five calendar days after delivery</strong>.
+              All return requests must be initiated within{" "}
+              <strong>14 days of the delivery date</strong> shown on your
+              tracking number.
             </li>
             <li>
-              Include your order ID, the product name, the reason for the
-              return, and clear photographs where the product is damaged, wrong,
-              or defective.
+              We do not issue cash or credit card refunds. Approved returns
+              receive a digital <strong>Elims Clothing's Store Credit</strong>{" "}
+              via email, which never expires.
             </li>
             <li>
-              Wait for our return authorization and follow the return
-              instructions. Do not send the product to an address not supplied
-              by Elims Clothing's.
+              Items must be unworn, unwashed, and returned with all original
+              tags attached and free of stains, odors, or signs of use.
             </li>
             <li>
-              After the returned product is received and inspected, we process
-              an approved refund immediately and no later than
-              <strong> three business days</strong>.
+              Clearance, markdown, flash sale items, bodysuits, swimwear,
+              undergarments, and accessories are final sale and cannot be
+              returned or exchanged.
             </li>
             <li>
-              Your bank or payment provider may take a further
-              <strong> five to ten business days</strong> to show the refund.
-              For some international transactions, posting can take up to 15
-              business days.
+              You are responsible for your own return shipping costs and
+              arrangements. We do not provide prepaid return labels.
             </li>
           </ol>
         </div>
 
         <div className="space-y-12 text-[15px] leading-relaxed text-neutral-700">
-          <Section title="1. Scope">
+          <Section title="1. Return window">
             <p>
-              This Refund and Return Policy applies to products purchased
-              through Elims Clothing's&apos;s website or another Elims Clothing's sales channel
-              that refers to this policy. It explains when a product may be
-              returned, how to request authorization, who pays return shipping,
-              and how refunds are issued. It does not limit any mandatory
-              consumer rights that apply to you under the law of your country.
+              All return requests must be initiated within{" "}
+              <strong>14 days of the delivery date</strong> shown on your
+              tracking number. Requests submitted after this period are
+              outside this policy and may be refused.
             </p>
           </Section>
 
-          <Section title="2. Return request deadline">
+          <Section title="2. Store credit & exchanges">
             <p>
-              You must contact Elims Clothing's customer support immediately and no later
-              than{" "}
-              <strong>
-                five calendar days after the date you received the product
-              </strong>
-              . The date shown by the courier or delivery record is the delivery
-              date. A request submitted after the five-day period is outside
-              this policy and may be refused unless applicable law requires a
-              longer period.
+              We do not issue cash or credit card refunds. Approved returns
+              will be issued a digital{" "}
+              <strong>Elims Clothing's Store Credit</strong> sent to you by
+              email.
             </p>
             <p className="mt-4">
-              Contact us at <strong>{SUPPORT_EMAIL}</strong> or
-              <strong> {SUPPORT_PHONE}</strong>. Your message must include your
-              order ID, full name, delivery address, product name, and a
-              clear description of the issue. For a damaged, incorrect, or
-              defective product, attach photographs of the product, packaging,
-              shipping label, and visible damage.
+              Store credit does not expire and can be used on any future
+              purchase. If you need a different size or colour, please return
+              your item for store credit and place a new order — we do not
+              process direct exchanges.
             </p>
           </Section>
 
-          <Section title="3. Return authorization process">
-            <ol className="list-decimal space-y-3 pl-5">
+          <Section title="3. Condition of items">
+            <p>
+              To qualify for store credit, clothing must meet the following
+              strict criteria:
+            </p>
+            <ul className="mt-4 list-disc space-y-3 pl-5">
               <li>
-                We acknowledge a complete return request within
-                <strong> one business day</strong>.
+                <strong>Unworn &amp; unwashed:</strong> Items must be in
+                their original, unaltered condition.
               </li>
               <li>
-                If the request is eligible, we issue a return authorization and
-                provide the return address, carrier instructions, packaging
-                requirements, and deadline for dispatch.
+                <strong>Tags attached:</strong> All original brand and price
+                tags must still be securely attached.
               </li>
               <li>
-                You must not dispatch the product until you receive our written
-                authorization. Products sent without authorization may be
-                delayed, rejected, or returned to you at your cost.
+                <strong>Flawless:</strong> Items must be free of makeup,
+                deodorant stains, perfume, pet hair, or smoke odours.
               </li>
+            </ul>
+            <p className="mt-4">
+              We inspect every returned item. Items that do not meet these
+              conditions will not qualify for store credit and may be sent
+              back to you.
+            </p>
+          </Section>
+
+          <Section title="4. Final sale items">
+            <p>
+              For hygienic and clearance reasons, the following items cannot
+              be returned or exchanged:
+            </p>
+            <ul className="mt-4 list-disc space-y-3 pl-5">
+              <li>Clearance, markdown, or flash sale items.</li>
               <li>
-                You must dispatch an authorized return within
-                <strong> three calendar days after authorization</strong>,
-                unless our written instructions specify a different period
-                because of international shipping or customs requirements.
+                Bodysuits, swimwear, undergarments, and accessories.
               </li>
-              <li>
-                Send us the tracking number on the day the return is dispatched.
-                We will confirm receipt when the package reaches us.
-              </li>
-            </ol>
+            </ul>
           </Section>
 
-          <Section title="4. Conditions for an approved return">
+          <Section title="5. How to start a return & shipping costs">
             <p>
-              Except for a product that arrived damaged, wrong, or defective,
-              the product must be unworn, unwashed, unaltered, free from
-              perfume, makeup, stains, hair, and other signs of use, and
-              returned with all original tags, packaging, accessories, and
-              documentation. You may inspect a product as reasonably necessary,
-              but you must not use it beyond that inspection.
+              To start a return, please email{" "}
+              <strong>{SUPPORT_EMAIL}</strong> with your order number.
             </p>
             <p className="mt-4">
-              We inspect every returned product. If it does not meet these
-              conditions, we may refuse the refund or deduct the documented loss
-              in value to the extent permitted by applicable law. We will notify
-              you of the inspection outcome and the reason for any refusal or
-              deduction.
-            </p>
-          </Section>
-
-          <Section title="5. Products that are not returnable">
-            <p>
-              The following products are not eligible for return or refund
-              unless they are defective, incorrect, or applicable law requires
-              otherwise: final-sale products; products expressly marked
-              non-returnable before purchase; bespoke, personalized, altered, or
-              made-to-measure products; and products that have been worn,
-              washed, damaged, stained, perfumed, or returned without original
-              tags and packaging.
+              <strong>Mail-in returns:</strong> Customers are responsible for
+              their own return shipping arrangements and costs. Elims
+              Clothing's does not provide prepaid return labels.
             </p>
             <p className="mt-4">
-              If a product is defective or we sent the wrong product, contact us
-              within the same five-day period. We may offer a replacement or a
-              full refund, including reasonable documented return shipping
-              costs, subject to inspection and applicable law.
+              We highly recommend using a trackable shipping service (like
+              USPS, UPS, or FedEx). Elims Clothing's is not responsible for
+              packages that are lost or damaged in transit back to us.
             </p>
           </Section>
 
-          <Section title="6. Return shipping costs">
+          <Section title="6. Agreement">
             <p>
-              If you are returning a product because you changed your mind,
-              selected the wrong size or colour, or no longer want the product,
-              you are responsible for the return shipping cost, customs charges,
-              duties, and insurance. We recommend using a trackable service and
-              retaining proof of dispatch.
-            </p>
-            <p className="mt-4">
-              If the product arrived defective, damaged, or materially different
-              from the product ordered, Elims Clothing's will provide return instructions
-              and reimburse reasonable, documented return shipping costs after
-              the return is approved. We do not reimburse optional expedited
-              shipping, insurance upgrades, customs penalties caused by
-              incorrect information, or charges not approved in writing.
-            </p>
-          </Section>
-
-          <Section title="7. Refund approval and timing">
-            <p>
-              We issue the refund after the returned product is delivered to us
-              and passes inspection. We will email you the inspection decision
-              within <strong>two business days of receipt</strong>. If approved,
-              Elims Clothing's will submit the refund to the original payment method
-              immediately and no later than{" "}
-              <strong>three business days of the inspection decision</strong>.
-            </p>
-            <p className="mt-4">
-              The payment provider or bank controls when the credit appears in
-              your account. Allow five to ten business days after we submit the
-              refund. International card or bank transactions may take up to 15
-              business days because of banking, settlement, or foreign-exchange
-              processes. Elims Clothing's cannot change a provider&apos;s posting time
-              after the refund has been submitted, but we will provide the
-              refund reference on request.
-            </p>
-          </Section>
-
-          <Section title="8. Refund amount and method">
-            <p>
-              An approved refund is returned to the payment method used for the
-              order. We do not pay cash refunds or send refunds to a different
-              card or bank account except where required by law or approved by
-              the payment provider. Unless the product was wrong, defective, or
-              damaged, original delivery charges, return shipping, customs fees,
-              duties, and foreign-exchange charges are not refundable.
-            </p>
-            <p className="mt-4">
-              If only part of an order is returned, we refund the approved price
-              of that product and any return-shipping amount we have agreed to
-              reimburse. Promotional discounts are recalculated where the
-              returned product means the remaining order no longer qualifies for
-              the promotion.
-            </p>
-          </Section>
-
-          <Section title="9. Missing, delayed, or rejected returns">
-            <p>
-              You are responsible for the product until it is delivered to the
-              return address we provide. If a return is lost, damaged, or held
-              by customs, send us the carrier claim number and proof of
-              dispatch. We will reasonably assist, but a refund is not due until
-              the product is received or the carrier confirms the loss and the
-              applicable law requires a refund.
-            </p>
-            <p className="mt-4">
-              If we reject a return, we will tell you why. You may request a
-              review by replying to the rejection email within five calendar
-              days. If the product is to be sent back to you, you must pay the
-              return delivery cost within seven calendar days of our notice.
-            </p>
-          </Section>
-
-          <Section title="10. Contact">
-            <p>
-              Start every return request by emailing
-              <strong> {SUPPORT_EMAIL}</strong> with the subject line
-              <strong> “Return Request — [ORDER ID]”</strong>. Customer
-              support telephone: <strong>{SUPPORT_PHONE}</strong>.
+              By submitting a return, you agree to this Return Policy. You
+              understand that Elims Clothing's does not offer cash or credit
+              card refunds, that all qualified returns receive store credit
+              only within 14 days of delivery, and that you are responsible
+              for covering your own return shipping costs.
             </p>
           </Section>
         </div>

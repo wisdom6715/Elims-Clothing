@@ -14,6 +14,7 @@ import {
 import { auth } from "@/lib/firebase.config";
 import Image from "next/image";
 import DiscountBanner from "./DiscountBanner";
+import { useCart } from "@/hook/useAddToCart";
 
 const navItems = [
   { label: "Collections", href: "/#collections" },
@@ -24,9 +25,12 @@ const navItems = [
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
+  const { items } = useCart();
 
   const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   useEffect(() => {
     return onAuthStateChanged(auth, setUser);
@@ -115,12 +119,18 @@ export default function Header() {
             {/* Cart */}
             <button
               onClick={() => router.push("/cart")}
-              aria-label="Cart"
+              aria-label={`Cart${cartCount > 0 ? `, ${cartCount} items` : ""}`}
+              className="relative"
             >
               <ShoppingBag
                 size={19}
                 strokeWidth={1.6}
               />
+              {cartCount > 0 && (
+                <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#0f473a] px-1 text-[9px] font-semibold leading-none text-white">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
             </button>
 
             {/* Mobile Menu Button */}
