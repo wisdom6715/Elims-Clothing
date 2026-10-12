@@ -84,26 +84,10 @@ export default function CampaignHero() {
 
   return (
     <section className="py-4 sm:py-6">
-      {/* Top Banner Tagline */}
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-[#e2dcd2] pb-3 text-[11px] uppercase tracking-[0.2em] text-[#856529]">
-        <div className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#b88c3a]" />
-          <span className="font-semibold">Official 2026 Campaign</span>
-          <span className="text-[#c5beaf]">•</span>
-          <span className="text-[#64594c]">African Heritage · Timeless Elegance</span>
-        </div>
-        <Link
-          href="/about#family"
-          className="text-[#856529] hover:underline font-medium tracking-[0.16em]"
-        >
-          The Family Behind Elims →
-        </Link>
-      </div>
-
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.75fr)_minmax(280px,0.75fr)] lg:gap-5">
         {/* MAIN HERO CAROUSEL */}
         <article
-          className="relative min-h-[580px] sm:min-h-[640px] lg:min-h-[660px] overflow-hidden rounded-[2rem] border border-[#e5decb] bg-[#faf7f0] shadow-xl"
+          className="relative min-h-[580px] sm:min-h-[640px] lg:min-h-[660px] overflow-hidden rounded-[2rem] border border-[#e5decb] bg-[#faf7f0] lg:border-[#523d1d] lg:bg-[#1f150a] shadow-xl"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -123,58 +107,32 @@ export default function CampaignHero() {
                   fill
                   priority={idx === 0}
                   sizes="(min-width: 1024px) 65vw, 100vw"
-                  className="object-contain object-right-bottom sm:object-cover sm:object-center lg:object-contain lg:object-right"
+                  className="object-contain object-right-bottom sm:object-cover sm:object-center lg:object-cover lg:object-right"
                 />
 
                 {/* Editorial Gradient Overlay for legibility */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8f2] via-[#fbf8f2]/90 to-transparent sm:via-[#fbf8f2]/75 lg:from-[#fbf8f2] lg:via-[#fbf8f2]/80 lg:to-transparent lg:w-[60%]" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#fbf8f2] via-[#fbf8f2]/90 to-transparent sm:via-[#fbf8f2]/75 lg:from-[#1f150a] lg:via-[#1f150a]/90 lg:to-transparent lg:w-[68%]" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#fbf8f2] via-transparent to-transparent sm:hidden" />
               </div>
             ))}
           </div>
 
-          {/* Decorative Gold Filigree Curve Line */}
-          <div className="pointer-events-none absolute left-0 top-0 h-full w-full">
-            <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full border border-[#d8be86]/30" />
-            <div className="absolute -left-10 -top-10 h-96 w-96 rounded-full border border-[#d8be86]/20" />
-          </div>
 
           {/* Content Layer (Aligned with the typography in the uploaded images) */}
           <div className="relative z-20 flex h-full min-h-[580px] sm:min-h-[640px] lg:min-h-[660px] max-w-xl flex-col justify-between p-7 sm:p-10 lg:p-12">
-            {/* Top Brand Crest & Eyebrow */}
-            <div>
-              <div className="flex items-center gap-3">
-                <span className="h-px w-8 bg-[#c89e47]" />
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8a6521]">
-                  {activeSlide.eyebrow}
-                </p>
-              </div>
-
-              {/* Gold Crest Monogram */}
-              <div className="mt-4 flex items-center gap-3">
-                <span className="font-serif text-xs tracking-[0.25em] text-[#9c7128]">
-                  ELIMS CLOTHINGS
-                </span>
-                <span className="text-[10px] text-[#c0a266]">❖</span>
-                <span className="text-[9px] uppercase tracking-[0.18em] text-[#8a7a67]">
-                  LAGOS COUTURE
-                </span>
-              </div>
-            </div>
-
-            {/* Middle Main Headline */}
-            <div className="my-6">
-              <span className="inline-block rounded-full border border-[#d8be86] bg-[#f7f2e6] px-3.5 py-1 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-[#876221]">
+            {/* Main Headline Block */}
+            <div className="my-auto py-4">
+              <span className="inline-block rounded-full border border-[#d8be86] bg-[#f7f2e6] px-3.5 py-1 text-[9.5px] font-semibold uppercase tracking-[0.16em] text-[#876221] lg:border-[#8f6e33]/70 lg:bg-[#342413]/80 lg:text-[#f3dfb5]">
                 {activeSlide.badge}
               </span>
 
-              <h1 className="font-garamond mt-4 text-[clamp(2.8rem,5.2vw,5.5rem)] font-light leading-[0.9] tracking-[-0.04em] text-[#865d1d] sm:leading-[0.92]">
+              <h1 className="font-garamond mt-4 text-[clamp(2.8rem,5.2vw,5.5rem)] font-light leading-[0.9] tracking-[-0.04em] text-[#865d1d] lg:text-[#fffdfa] sm:leading-[0.92]">
                 {activeSlide.title}
               </h1>
 
-              <div className="my-4 h-0.5 w-16 bg-gradient-to-r from-[#c89e47] to-transparent" />
+              <div className="my-4 h-0.5 w-16 bg-gradient-to-r from-[#c89e47] to-transparent lg:from-[#e4c98f]" />
 
-              <p className="max-w-md text-[14px] leading-relaxed text-[#595246] sm:text-[15.5px]">
+              <p className="max-w-md text-[14px] leading-relaxed text-[#595246] lg:text-[#dfd7c9] sm:text-[15.5px]">
                 {activeSlide.subtitle}
               </p>
 
@@ -190,7 +148,7 @@ export default function CampaignHero() {
 
                 <Link
                   href="/products/all"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#c5ad7c] bg-white/70 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#715018] backdrop-blur-sm transition-colors hover:bg-white"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#c5ad7c] bg-white/70 px-5 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#715018] backdrop-blur-sm transition-colors hover:bg-white lg:border-[#a88344]/70 lg:bg-[#2e1d0f]/70 lg:text-[#f3dfb5] lg:hover:bg-[#3d2714]"
                 >
                   <span>Shop All Pieces</span>
                 </Link>
@@ -198,7 +156,7 @@ export default function CampaignHero() {
             </div>
 
             {/* Bottom Controls & Slide Thumbnails */}
-            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#d8be86]/40 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-4 border-t border-[#d8be86]/40 lg:border-[#856128]/40 pt-4">
               <div className="flex items-center gap-2">
                 {CAMPAIGN_SLIDES.map((slide, idx) => (
                   <button
@@ -207,8 +165,8 @@ export default function CampaignHero() {
                     aria-label={`Go to ${slide.category}`}
                     className={`h-2.5 transition-all duration-300 rounded-full ${
                       idx === current
-                        ? "w-8 bg-[#9c7128]"
-                        : "w-2.5 bg-[#d8be86]/50 hover:bg-[#9c7128]/50"
+                        ? "w-8 bg-[#9c7128] lg:bg-[#e4c98f]"
+                        : "w-2.5 bg-[#d8be86]/50 lg:bg-[#856128]/50 hover:bg-[#9c7128]/50 lg:hover:bg-[#e4c98f]/50"
                     }`}
                   />
                 ))}
@@ -223,7 +181,7 @@ export default function CampaignHero() {
                     )
                   }
                   aria-label="Previous slide"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d8be86] bg-white/80 text-[#865d1d] transition hover:bg-[#865d1d] hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d8be86] bg-white/80 text-[#865d1d] transition hover:bg-[#865d1d] hover:text-white lg:border-[#856128] lg:bg-[#2b1c0e]/80 lg:text-[#e4c98f] lg:hover:bg-[#e4c98f] lg:hover:text-[#20160b]"
                 >
                   <ChevronLeft size={16} />
                 </button>
@@ -232,7 +190,7 @@ export default function CampaignHero() {
                     setCurrent((prev) => (prev + 1) % CAMPAIGN_SLIDES.length)
                   }
                   aria-label="Next slide"
-                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d8be86] bg-white/80 text-[#865d1d] transition hover:bg-[#865d1d] hover:text-white"
+                  className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d8be86] bg-white/80 text-[#865d1d] transition hover:bg-[#865d1d] hover:text-white lg:border-[#856128] lg:bg-[#2b1c0e]/80 lg:text-[#e4c98f] lg:hover:bg-[#e4c98f] lg:hover:text-[#20160b]"
                 >
                   <ChevronRight size={16} />
                 </button>
