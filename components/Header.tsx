@@ -20,6 +20,7 @@ const navItems = [
   { label: "Collections", href: "/#collections" },
   { label: "New arrivals", href: "/products/all" },
   { label: "The edit", href: "/#stories" },
+  { label: "About", href: "/about" },
 ];
 
 export default function Header() {

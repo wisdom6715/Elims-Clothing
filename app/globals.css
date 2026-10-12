@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display:ital@0;1&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -36,6 +36,23 @@ button:active, a:active { transform: scale(0.98); }
   .bg-cream { background-color: var(--cream); }
   .border-dark-brown { border-color: var(--dark-brown); }
   .font-display { font-family: "DM Serif Display", Georgia, serif; }
+  .font-garamond { font-family: "Cormorant Garamond", Georgia, serif; }
+  .gold-gradient-text {
+    background: linear-gradient(135deg, #996e23 0%, #cf9f41 50%, #855b16 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gold-pill-btn {
+    background: linear-gradient(135deg, #a47625 0%, #caa045 50%, #8c5f18 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(164, 118, 37, 0.28);
+    transition: all 0.25s ease;
+  }
+  .gold-pill-btn:hover {
+    background: linear-gradient(135deg, #91651c 0%, #b88d37 50%, #764e10 100%);
+    box-shadow: 0 6px 22px rgba(164, 118, 37, 0.38);
+    transform: translateY(-1px);
+  }
   .eyebrow { @apply text-[10px] font-semibold uppercase tracking-[0.16em]; }
   .display-title { @apply font-display text-3xl leading-[0.94] text-[#0f473a] sm:text-4xl lg:text-5xl; }
   .editorial-link { @apply items-center gap-2 border-b border-current pb-1 text-[11px] font-semibold uppercase tracking-[0.12em] transition-opacity hover:opacity-60; }

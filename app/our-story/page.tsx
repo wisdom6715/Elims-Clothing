@@ -5,6 +5,7 @@ import GlobalJourney from "./components/about/GlobalJourney";
 import Heritage from "./components/about/Heritage";
 import Hero from "./components/about/Hero";
 import Pillars from "./components/about/Pillars";
+import FamilyBehindElims from "./components/about/FamilyBehindElims";
 import { sans, serif } from "./components/about/fonts";
 import { SANS } from "./components/about/ui";
 import Header from "@/components/Header";
@@ -28,6 +29,7 @@ export default function AboutPage() {
         <Heritage />
         <Pillars />
         <Generations />
+        <FamilyBehindElims />
         <GlobalJourney />
       </main>
       <Footer />

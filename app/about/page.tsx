@@ -12,6 +12,27 @@ const images = {
     "https://files.manuscdn.com/search-media/310519663942355207/6LgafaxYasXCKPqSeT7JFm/bPKuEDE3NJwVzGXSypCgoN.jpg",
 };
 
+const familyMembers = [
+  {
+    name: "Oluwaferanmi Ifedayo Salako",
+    role: "Operations & Business Manager",
+    bio: "Oluwaferanmi oversees business operations, organisational efficiency, and strategic business development. His focus is on building a strong operational foundation, supporting sustainable growth, maintaining standards, and ensuring that the business is positioned for long-term success.",
+    focus: "Operations • Efficiency • Strategic Growth",
+  },
+  {
+    name: "Iteoluwakishi Sijuwola Salako",
+    role: "Development Lead",
+    bio: "Iteoluwakishi focuses on development, innovation, and continuous improvement. His role is to support the evolution of the brand, explore new opportunities, strengthen its development processes, and help build a foundation that supports Elims’ long-term ambitions.",
+    focus: "Development • Innovation • Continuous Improvement",
+  },
+  {
+    name: "Kikidaope Olatokunbo Salako",
+    role: "Digital Marketing & International Growth Lead",
+    bio: "Kikidaope leads the brand’s digital marketing and international growth initiatives. His focus is on expanding Elims’ digital presence, connecting with new audiences, strengthening brand awareness, and identifying opportunities to introduce Elims Clothings to customers across international markets.",
+    focus: "Digital Marketing • International Growth • Brand Awareness",
+  },
+];
+
 const principles = [
   ["01", "SILHOUETTE", "The confidence of a perfectly crafted silhouette."],
   ["02", "ANCESTRY", "The beauty of a fabric rich with history."],
@@ -65,6 +86,99 @@ export default function ElimsAboutPage() {
         <section id="letter" className="mx-auto grid max-w-[1320px] gap-12 px-5 pb-24 sm:px-8 sm:pb-32 lg:grid-cols-[0.55fr_1.1fr] lg:gap-20 lg:px-12"><div><figure><div className="aspect-[0.82] overflow-hidden bg-[#b9aa96]"><img src={images.founder} alt="Creative director seated in the atelier" className="h-full w-full object-cover" /></div><figcaption className="relative z-10 -mt-14 mx-5 bg-[#fbfaf6] p-5 shadow-[0_12px_28px_rgba(69,57,40,0.06)] sm:mx-8 sm:p-7"><Eyebrow>CREATIVE DIRECTOR &amp; FOUNDER</Eyebrow><p className="elims-serif mt-2 text-2xl leading-none text-[#1d342b]">Olubukola Salako</p><p className="elims-sans mt-3 text-[10px] uppercase tracking-[0.2em] text-[#7a7166]">Elims Clothings</p></figcaption></figure><div className="mt-5 bg-[#f0ede5] p-6 sm:p-8"><Eyebrow>CREED</Eyebrow><p className="elims-serif mt-4 text-xl italic leading-tight text-[#5f625a]">“Woven with Heritage. Designed with Purpose. Created to Leave a Legacy.”</p></div></div><article><Paper className="p-7 sm:p-12 lg:p-16"><div className="flex items-center justify-between gap-5"><Eyebrow>FROM THE FOUNDER</Eyebrow><span className="elims-sans text-[10px] tracking-[0.2em] text-[#857b6d]">LETTER NO. 01</span></div><h2 className="elims-serif mt-8 text-[clamp(3rem,5vw,5.2rem)] leading-[0.9] tracking-[-0.045em] text-[#005440]">A Letter from My Heart</h2><p className="elims-serif mt-8 text-3xl text-[#005440]">Dear Friend,</p><div className="elims-sans mt-5 space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Welcome to Elims Clothings.</p><p>Before you discover our fabrics and designs, I want to share the heart behind this brand.</p><p className="font-medium italic text-[#075541]">Elims is a dream that never truly left me.</p><p>Born from my love for fashion, beauty, and African heritage, Elims represents my desire to create something meaningful—something that honours where we come from while embracing the elegance of the modern world.</p><p>The journey has not always been straightforward. There were seasons when life required me to pause and focus on other responsibilities, and moments when the path ahead was uncertain. Yet, through it all, the vision of Elims remained in my heart.</p></div><div className="my-8 bg-[#f0ede5] px-6 py-5 elims-sans text-[15px] leading-7 text-[#343a35]">That journey taught me something I deeply believe: a dream connected to purpose may pause, but it does not have to disappear.</div><div className="elims-sans space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Inspired by the artistry and stories woven into Adire, Ankara, and Aso-Oke, Elims was created to celebrate the richness of our heritage through refined, timeless designs.</p><p>At the heart of Elims is also a desire to create legacy.</p><p className="font-medium text-[#075541]">And now, I would love to personally invite you to be part of my journey.</p></div><p className="elims-serif mt-10 text-[clamp(1.8rem,3.1vw,3.4rem)] leading-[1.03] text-[#075541]">So, from one heart to another, I invite you to come with me.<br />Come and celebrate where we come from.<br />Come and embrace the beauty of who you are.<br />Come and be part of a story that is still being written.</p><div className="mt-12"><p className="elims-sans text-sm italic text-[#857b6d]">With all my heart and gratitude,</p><p className="elims-serif mt-2 text-3xl text-[#075541]">Olubukola Salako</p><p className="elims-sans mt-3 text-[10px] font-semibold tracking-[0.2em] text-[#075541]">FOUNDER & CEO, ELIMS CLOTHINGS</p></div></Paper></article></section>
 
         <section id="story" className="bg-[#f0ede5] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"><div className="mx-auto max-w-[1320px]"><Eyebrow>GENESIS &amp; PURPOSE</Eyebrow><h2 className="elims-serif mt-7 max-w-[1060px] text-[clamp(3.1rem,5.7vw,6.8rem)] leading-[0.9] tracking-[-0.055em] text-[#005440]">The Elims Story — A Dream Woven with Purpose, Heritage and Passion</h2><p className="elims-serif mt-6 text-2xl italic text-[#17634f] sm:text-4xl">“Every great story begins with a dream.”</p><div className="mt-20 grid items-start gap-14 lg:grid-cols-[1fr_0.76fr] lg:gap-24"><div><div className="elims-sans space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Elims Clothings was born from a deep love for fashion, culture, creativity, and the timeless beauty of African heritage. What began as a passion for beautiful clothing has grown into a vision—one that celebrates where we come from while embracing the limitless possibilities of where we are going.</p><p>For the founder of Elims Clothings, fashion has always been more than fabric and design. It is a language. It tells stories without words. It carries memories, expresses identity, and has the power to make a person feel confident, beautiful, and seen.</p><p>Inspired by the richness of African artistry, Elims Clothings draws from the beauty of traditional fabrics such as Adire, Ankara and Aso-Oke, reimagining them through a contemporary and refined lens.</p></div><Paper className="mt-8 p-6"><Eyebrow>ARTISANAL LOOM DOCUMENTATION</Eyebrow><p className="elims-sans mt-3 text-sm leading-6 text-[#565b54]">Every strip of hand-woven Aso-Oke is pulled on narrow heritage looms by artisan guilds who have preserved the art across generations.</p></Paper></div><figure><div className="aspect-[0.9] overflow-hidden bg-[#bca98f]"><img src={images.textile} alt="Textile details in an atelier" className="h-full w-full object-cover" /></div><figcaption className="relative z-10 -mt-12 mx-5 bg-[#fbfaf6] p-5 shadow-[0_12px_28px_rgba(69,57,40,0.06)] sm:mx-10 sm:p-7"><Eyebrow>LOOM ARTIFACT</Eyebrow><p className="elims-serif mt-2 text-2xl text-[#183a2f]">Ancestral weft &amp; warp craftsmanship</p></figcaption></figure></div></div></section>
+
+        <section id="family" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40">
+          <div className="max-w-[900px]">
+            <Eyebrow>FAMILY &amp; LEADERSHIP</Eyebrow>
+            <h2 className="elims-serif mt-7 text-[clamp(3.1rem,5.6vw,6.4rem)] leading-[0.9] tracking-[-0.05em] text-[#005440]">
+              The Family Behind Elims Clothings
+            </h2>
+            <p className="elims-serif mt-6 text-2xl italic text-[#17634f] sm:text-3xl">
+              One Family. One Vision. A Shared Future.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 items-start">
+            <div className="elims-sans space-y-6 text-[15px] leading-7 text-[#5c6059]">
+              <p>
+                At Elims Clothings, family is at the heart of our story. Built on a foundation of faith, resilience, creativity, and a passion for fashion, Elims represents a vision that goes beyond clothing. It is a commitment to celebrating African heritage, embracing modern elegance, and building a brand with an international identity.
+              </p>
+              <p>
+                As a family, we share a common goal: to preserve the vision behind Elims while building a strong, innovative, and sustainable fashion brand for generations to come.
+              </p>
+              <p>
+                Each member of our team brings a distinct area of expertise, working together to turn our shared vision into reality.
+              </p>
+            </div>
+
+            <Paper className="p-7 sm:p-9 border-l-4 border-[#c89e47]">
+              <Eyebrow>SHARED COMMITMENT</Eyebrow>
+              <p className="elims-serif mt-5 text-xl sm:text-2xl italic leading-snug text-[#075541]">
+                “Elims Clothings is more than a family business. It is a legacy in the making — a vision nurtured with love, strengthened by perseverance, and carried forward through shared commitment.”
+              </p>
+              <div className="elims-sans mt-6 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#756c60]">
+                <span>FAITH &amp; RESILIENCE</span>
+                <i>•</i>
+                <span>SUSTAINED VISION</span>
+              </div>
+            </Paper>
+          </div>
+
+          {/* Leadership Cards */}
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {familyMembers.map((member, idx) => (
+              <Paper key={member.name} className="flex flex-col justify-between p-7 sm:p-8 transition-transform duration-200 hover:-translate-y-1">
+                <div>
+                  <div className="flex items-center justify-between border-b border-[#e5decb] pb-4">
+                    <span className="elims-sans text-[10px] font-semibold tracking-[0.2em] text-[#b28b4c]">
+                      EXECUTIVE NO. 0{idx + 1}
+                    </span>
+                    <span className="h-2 w-2 rounded-full bg-[#005440]/30" />
+                  </div>
+                  <h3 className="elims-serif mt-6 text-2xl sm:text-[26px] leading-snug text-[#005440]">
+                    {member.name}
+                  </h3>
+                  <p className="elims-sans mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#b28b4c]">
+                    {member.role}
+                  </p>
+                  <p className="elims-sans mt-5 text-[14px] leading-relaxed text-[#5c6059]">
+                    {member.bio}
+                  </p>
+                </div>
+                <div className="mt-8 border-t border-[#e5decb] pt-4">
+                  <span className="elims-sans text-[9px] uppercase tracking-[0.16em] text-[#81786d]">
+                    {member.focus}
+                  </span>
+                </div>
+              </Paper>
+            ))}
+          </div>
+
+          {/* Growing Together, Building for the Future Banner */}
+          <div className="mt-16 overflow-hidden rounded-[1.5rem] bg-[#0e4839] p-8 text-[#f7f3e9] sm:p-12 lg:p-16">
+            <div className="max-w-[900px]">
+              <Eyebrow light>UNITY &amp; HORIZONS</Eyebrow>
+              <h3 className="elims-serif mt-5 text-[clamp(2.2rem,4vw,4rem)] leading-[0.95] tracking-[-0.03em] text-[#f7f3e9]">
+                Growing Together, Building for the Future
+              </h3>
+              <p className="elims-sans mt-6 text-[15px] leading-7 text-[#d9ddcf] sm:text-[16px]">
+                Together, we bring business leadership, development, and digital growth into one shared vision. While each of us has a distinct responsibility, we are united by the same purpose: to build a brand that honours its African roots while embracing the opportunities of the global fashion industry.
+              </p>
+              <p className="elims-sans mt-4 text-[15px] leading-7 text-[#d9ddcf] sm:text-[16px]">
+                Elims Clothings is more than a family business. It is a legacy in the making — a vision nurtured with love, strengthened by perseverance, and carried forward through shared commitment.
+              </p>
+
+              <div className="mt-10 border-t border-white/15 pt-8">
+                <p className="elims-serif text-2xl italic sm:text-3xl text-[#ecd7aa]">
+                  “Our roots define us. Our unity strengthens us. Our vision moves us forward.”
+                </p>
+                <p className="elims-serif mt-4 text-xl sm:text-2xl text-[#f7f3e9]">
+                  Welcome to Elims Clothings, where African heritage meets modern elegance.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <section id="collections" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"><div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-24"><div><Eyebrow>OUR INSPIRATION</Eyebrow><h2 className="elims-serif mt-7 max-w-[730px] text-[clamp(3rem,5.2vw,6rem)] leading-[0.9] tracking-[-0.05em] text-[#005440]">Inspired by Heritage. Created for a Wider World.</h2><div className="elims-sans mt-10 max-w-[680px] space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Elims Clothings is inspired by the richness of African culture and the limitless possibilities of fashion.</p><p>We believe heritage is not something to preserve behind glass. It is something to carry, translate, and make feel alive.</p></div><p className="elims-serif mt-10 max-w-[700px] text-[clamp(1.65rem,2.8vw,3rem)] italic leading-tight text-[#17634f]">“At Elims, we find inspiration in the elegance of African culture, the vibrancy of our communities, the strength of family, and the beauty of self-expression.”</p></div><div className="grid gap-5">{inspiration.map(([title, copy], index) => <Paper key={title} className="p-6 sm:p-7"><span className="elims-sans text-[10px] font-semibold tracking-[0.18em] text-[#b28b4c]">0{index + 1}</span><h3 className="elims-serif mt-4 text-2xl text-[#075541]">{title}</h3><p className="elims-sans mt-3 text-sm leading-6 text-[#62645d]">{copy}</p></Paper>)}</div></div><div className="mt-20 border-y border-[#d9d1c3] py-16 text-center sm:mt-28 sm:py-24"><p className="elims-serif mx-auto max-w-[1080px] text-[clamp(2rem,4vw,4.8rem)] leading-[0.98] tracking-[-0.035em] text-[#075541]">“We believe luxury is not simply about what you wear. It is about how it makes you feel.”</p></div></section>
 
