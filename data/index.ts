@@ -1,9 +1,9 @@
 import type { NavItem, Category, Product, SubHeroCard, FooterColumn } from "@/types";
 
 export const navItems: NavItem[] = [
-  { label: "Shop", href: "#" },
-  { label: "About", href: "#" },
-  { label: "FAQs", href: "#" },
+  { label: "Shop", href: "/products/all" },
+  { label: "About", href: "/about" },
+  { label: "FAQs", href: "/our-story" },
 ];
 
 export const subNavItems: NavItem[] = [

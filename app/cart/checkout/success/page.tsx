@@ -34,7 +34,13 @@ function StripeCheckoutSuccess() {
         if (cancelled) return;
         if (!response.ok) { setStatus("error"); return; }
         if (data.confirmed) {
-          window.localStorage.removeItem(CART_STORAGE_KEY);
+          try {
+            if (typeof window !== "undefined") {
+              window.localStorage.removeItem(CART_STORAGE_KEY);
+            }
+          } catch {
+            // Storage unavailable or blocked
+          }
           setOrderId(data.orderId ?? null);
           setStatus("confirmed");
           return;

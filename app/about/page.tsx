@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 
@@ -182,7 +183,26 @@ export default function ElimsAboutPage() {
 
         <section id="collections" className="mx-auto max-w-[1320px] px-5 py-24 sm:px-8 sm:py-32 lg:px-12 lg:py-40"><div className="grid gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-24"><div><Eyebrow>OUR INSPIRATION</Eyebrow><h2 className="elims-serif mt-7 max-w-[730px] text-[clamp(3rem,5.2vw,6rem)] leading-[0.9] tracking-[-0.05em] text-[#005440]">Inspired by Heritage. Created for a Wider World.</h2><div className="elims-sans mt-10 max-w-[680px] space-y-5 text-[15px] leading-7 text-[#5c6059]"><p>Elims Clothings is inspired by the richness of African culture and the limitless possibilities of fashion.</p><p>We believe heritage is not something to preserve behind glass. It is something to carry, translate, and make feel alive.</p></div><p className="elims-serif mt-10 max-w-[700px] text-[clamp(1.65rem,2.8vw,3rem)] italic leading-tight text-[#17634f]">“At Elims, we find inspiration in the elegance of African culture, the vibrancy of our communities, the strength of family, and the beauty of self-expression.”</p></div><div className="grid gap-5">{inspiration.map(([title, copy], index) => <Paper key={title} className="p-6 sm:p-7"><span className="elims-sans text-[10px] font-semibold tracking-[0.18em] text-[#b28b4c]">0{index + 1}</span><h3 className="elims-serif mt-4 text-2xl text-[#075541]">{title}</h3><p className="elims-sans mt-3 text-sm leading-6 text-[#62645d]">{copy}</p></Paper>)}</div></div><div className="mt-20 border-y border-[#d9d1c3] py-16 text-center sm:mt-28 sm:py-24"><p className="elims-serif mx-auto max-w-[1080px] text-[clamp(2rem,4vw,4.8rem)] leading-[0.98] tracking-[-0.035em] text-[#075541]">“We believe luxury is not simply about what you wear. It is about how it makes you feel.”</p></div></section>
 
-        <section className="px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12 lg:pb-36"><div className="mx-auto max-w-[1320px] bg-[#075541] px-6 py-20 text-center sm:px-14 sm:py-28 lg:px-24 lg:py-32"><Eyebrow light>THE NEXT CHAPTER</Eyebrow><h2 className="elims-serif mx-auto mt-8 max-w-[940px] text-[clamp(3.2rem,6vw,7rem)] leading-[0.88] tracking-[-0.05em] text-[#f7f3e9]">Heritage Reimagined.<br /><em>Elegance Elevated.</em></h2><p className="elims-sans mx-auto mt-8 max-w-[550px] text-sm leading-6 text-[#d9ddcf]">Explore the collections created for a life beautifully lived—pieces with memory in every thread and possibility in every silhouette.</p></div></section>
+        <section className="px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12 lg:pb-36">
+          <div className="mx-auto max-w-[1320px] bg-[#075541] px-6 py-20 text-center sm:px-14 sm:py-28 lg:px-24 lg:py-32">
+            <Eyebrow light>THE NEXT CHAPTER</Eyebrow>
+            <h2 className="elims-serif mx-auto mt-8 max-w-[940px] text-[clamp(3.2rem,6vw,7rem)] leading-[0.88] tracking-[-0.05em] text-[#f7f3e9]">
+              Heritage Reimagined.<br /><em>Elegance Elevated.</em>
+            </h2>
+            <p className="elims-sans mx-auto mt-8 max-w-[550px] text-sm leading-6 text-[#d9ddcf]">
+              Explore the collections created for a life beautifully lived—pieces with memory in every thread and possibility in every silhouette.
+            </p>
+            <div className="mt-10 flex justify-center">
+              <Link
+                href="/products/all"
+                className="inline-flex items-center gap-3 rounded-full bg-[#d4b77c] px-8 py-4 text-xs font-semibold tracking-[0.2em] text-[#075541] uppercase transition duration-300 hover:bg-[#ecd7aa]"
+              >
+                Explore Collections
+                <span aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
       <Footer />
 

@@ -34,7 +34,25 @@ export default function PopularProducts() {
   const [products, setProducts] = useState<Product[]>([]); const [loading, setLoading] = useState(true); const [loadingMore, setLoadingMore] = useState(false); const [activeTab, setActiveTab] = useState("All"); const [allCategories, setAllCategories] = useState<string[]>([]); const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null); const [hasMore, setHasMore] = useState(true); const sentinelRef = useRef<HTMLDivElement | null>(null); const fetchingRef = useRef(false);
   const { addToCart, isAdding } = useCart(); const { isWishlisted, toggleWishlist, isMutating } = useWishlist();
   useEffect(() => { getDocs(collection(db, "products")).then((snap) => setAllCategories(Array.from(new Set(snap.docs.map((doc) => (doc.data() as Product).category).filter(Boolean))))).catch((error) => console.error("Failed to load product categories:", error)); }, []);
-  const fetchBatch = useCallback(async (tab: string, cursor: QueryDocumentSnapshot<DocumentData> | null) => { const constraints: QueryConstraint[] = []; if (tab !== "All") constraints.push(where("category", "==", tab)); constraints.push(orderBy("createdAt", "desc")); if (cursor) constraints.push(startAfter(cursor)); constraints.push(limit(PAGE_SIZE)); const snapshot = await getDocs(query(collection(db, "products"), ...constraints)); return { items: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Product[], newLastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null, more: snapshot.docs.length === PAGE_SIZE }; }, []);
+  const fetchBatch = useCallback(async (tab: string, cursor: QueryDocumentSnapshot<DocumentData> | null) => {
+    try {
+      const constraints: QueryConstraint[] = [];
+      if (tab !== "All") constraints.push(where("category", "==", tab));
+      constraints.push(orderBy("createdAt", "desc"));
+      if (cursor) constraints.push(startAfter(cursor));
+      constraints.push(limit(PAGE_SIZE));
+      const snapshot = await getDocs(query(collection(db, "products"), ...constraints));
+      return { items: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Product[], newLastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null, more: snapshot.docs.length === PAGE_SIZE };
+    } catch (err) {
+      console.warn("Index query error, falling back without sort order:", err);
+      const constraints: QueryConstraint[] = [];
+      if (tab !== "All") constraints.push(where("category", "==", tab));
+      if (cursor) constraints.push(startAfter(cursor));
+      constraints.push(limit(PAGE_SIZE));
+      const snapshot = await getDocs(query(collection(db, "products"), ...constraints));
+      return { items: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Product[], newLastDoc: snapshot.docs[snapshot.docs.length - 1] ?? null, more: snapshot.docs.length === PAGE_SIZE };
+    }
+  }, []);
   useEffect(() => { let cancelled = false; setLoading(true); setProducts([]); setLastDoc(null); setHasMore(true); fetchBatch(activeTab, null).then(({ items, newLastDoc, more }) => { if (!cancelled) { setProducts(items); setLastDoc(newLastDoc); setHasMore(more); } }).catch((error) => console.error("Failed to load products:", error)).finally(() => { if (!cancelled) setLoading(false); }); return () => { cancelled = true; }; }, [activeTab, fetchBatch]);
   const loadMore = useCallback(async () => { if (fetchingRef.current || !hasMore || loading) return; fetchingRef.current = true; setLoadingMore(true); try { const { items, newLastDoc, more } = await fetchBatch(activeTab, lastDoc); setProducts((current) => [...current, ...items]); setLastDoc(newLastDoc); setHasMore(more); } catch (error) { console.error("Failed to load more products:", error); } finally { fetchingRef.current = false; setLoadingMore(false); } }, [activeTab, fetchBatch, hasMore, lastDoc, loading]);
   useEffect(() => { const node = sentinelRef.current; if (!node) return; const observer = new IntersectionObserver((entries) => { if (entries[0].isIntersecting) loadMore(); }, { rootMargin: "400px" }); observer.observe(node); return () => observer.disconnect(); }, [loadMore]);

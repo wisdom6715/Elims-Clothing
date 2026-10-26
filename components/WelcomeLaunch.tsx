@@ -5,17 +5,36 @@ import Image from "next/image";
 
 const STORAGE_KEY_SESSION_DISMISS = "elimsclothing_popup_dismissed_session";
 
+function safeSessionStorageGet(key: string): string | null {
+  try {
+    if (typeof window === "undefined") return null;
+    return window.sessionStorage?.getItem(key) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function safeSessionStorageSet(key: string, value: string): void {
+  try {
+    if (typeof window !== "undefined") {
+      window.sessionStorage?.setItem(key, value);
+    }
+  } catch {
+    // Session storage disabled / restricted in private browsing
+  }
+}
+
 export default function WelcomeLaunchPopup() {
   const [visible, setVisible] = useState(false);
 
   const close = useCallback(() => {
     setVisible(false);
-    sessionStorage.setItem(STORAGE_KEY_SESSION_DISMISS, "true");
+    safeSessionStorageSet(STORAGE_KEY_SESSION_DISMISS, "true");
   }, []);
 
   // Decide whether to show, on mount
   useEffect(() => {
-    const dismissedThisSession = sessionStorage.getItem(STORAGE_KEY_SESSION_DISMISS) === "true";
+    const dismissedThisSession = safeSessionStorageGet(STORAGE_KEY_SESSION_DISMISS) === "true";
     if (!dismissedThisSession) {
       setVisible(true);
     }

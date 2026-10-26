@@ -69,7 +69,7 @@ function CartItemSkeleton() {
     </div>
   );
 }
-const CART_STORAGE_KEY = "kg_luxee_cart";
+const CART_STORAGE_KEY = "elims_clothings_cart";
 
 export default function CartPage() {
   const { user } = useCurrentUser();
@@ -87,15 +87,25 @@ export default function CartPage() {
   // ... (keep the existing edit state)
 
   useEffect(() => {
-    const storedItems = localStorage.getItem(CART_STORAGE_KEY);
-    if (storedItems) {
-      setItems(JSON.parse(storedItems));
+    try {
+      const storedItems = typeof window !== "undefined" ? localStorage.getItem(CART_STORAGE_KEY) : null;
+      if (storedItems) {
+        setItems(JSON.parse(storedItems));
+      }
+    } catch {
+      // Storage unavailable
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      }
+    } catch {
+      // Storage unavailable
+    }
   }, [items]);
 
   useEffect(() => {
@@ -121,7 +131,15 @@ export default function CartPage() {
         });
 
         // Sync local cart items to the database
-        const localItems = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+        let localItems: CartItem[] = [];
+        try {
+          if (typeof window !== "undefined") {
+            localItems = JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || "[]");
+          }
+        } catch {
+          localItems = [];
+        }
+
         for (const item of localItems) {
           const existingItem = rows.find(
             (i) => i.product_id === item.product_id && i.size === item.size && i.color === item.color
@@ -138,7 +156,13 @@ export default function CartPage() {
         }
 
         // Clear the local cart after syncing
-        localStorage.removeItem(CART_STORAGE_KEY);
+        try {
+          if (typeof window !== "undefined") {
+            localStorage.removeItem(CART_STORAGE_KEY);
+          }
+        } catch {
+          // Ignore
+        }
 
         setItems(rows);
         setLoading(false);
@@ -308,9 +332,9 @@ export default function CartPage() {
         <div className="flex flex-wrap items-center gap-x-1 mb-8">
           {PERKS.map((perk, i) => (
             <span key={perk} className="flex items-center">
-              <a href="#" className="text-sm text-[#C9A96E] hover:text-[#A07840] transition-colors">
+              <span className="text-sm text-[#C9A96E]">
                 {perk}
-              </a>
+              </span>
               {i < PERKS.length - 1 && <span className="mx-1.5 text-gray-300 text-sm">•</span>}
             </span>
           ))}

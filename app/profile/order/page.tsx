@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Search, ShoppingBag, ChevronDown, Loader2 } from "lucide-react";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase.config";
@@ -191,7 +192,7 @@ export default function OrdersPage() {
           </div>
           <p className="text-gray-500 text-sm">No {activeTab.toLowerCase()} items found</p>
           {activeTab === "Purchased" && (
-            <a href="#" className="text-sm font-medium text-[#C9A96E] hover:underline">Browse products →</a>
+            <Link href="/products/all" className="text-sm font-medium text-[#0f473a] hover:underline">Browse products →</Link>
           )}
         </div>
       ) : (

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Heart, Trash2, ShoppingCart, Package } from "lucide-react";
 import { useWishlist } from "@/hook/useAddToWishList";
 import { useCart } from "@/hook/useAddToCart";
@@ -73,9 +74,9 @@ export default function WishlistPage() {
             <Heart size={28} className="text-[#C9A96E]" strokeWidth={1.5} />
           </div>
           <p className="text-gray-500 text-sm">Your wishlist is empty</p>
-          <a href="#" className="text-sm font-medium text-[#C9A96E] hover:underline">
+          <Link href="/products/all" className="text-sm font-medium text-[#0f473a] hover:underline">
             Explore products →
-          </a>
+          </Link>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3">

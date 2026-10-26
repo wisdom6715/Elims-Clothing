@@ -53,7 +53,34 @@ export interface CartSyncResult {
   itemCount: number;
 }
 
-const CART_STORAGE_KEY = "kg_luxee_cart";
+const CART_STORAGE_KEY = "elims_clothings_cart";
+
+const safeGetStorage = (key: string): string | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+
+const safeSetStorage = (key: string, value: string): void => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // ignore restricted storage
+  }
+};
+
+const safeRemoveStorage = (key: string): void => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // ignore restricted storage
+  }
+};
 
 // Prevent two components (for example the login page and this hook) from
 // merging the same guest cart concurrently in the same browser tab.
@@ -124,9 +151,7 @@ const fromFirestore = (
 });
 
 const readGuestCart = (): CartItem[] => {
-  if (typeof window === "undefined") return [];
-
-  const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+  const raw = safeGetStorage(CART_STORAGE_KEY);
   if (!raw) return [];
 
   try {
@@ -158,31 +183,26 @@ const readGuestCart = (): CartItem[] => {
       })
       .filter((item) => item.product_id.length > 0);
   } catch (error) {
-    console.error("Failed to read the guest cart from localStorage:", error);
-    window.localStorage.removeItem(CART_STORAGE_KEY);
+    console.error("Failed to read the guest cart from storage:", error);
+    safeRemoveStorage(CART_STORAGE_KEY);
     return [];
   }
 };
 
 const writeGuestCart = (items: CartItem[]) => {
-  if (typeof window === "undefined") return;
-
   try {
     if (items.length === 0) {
-      window.localStorage.removeItem(CART_STORAGE_KEY);
+      safeRemoveStorage(CART_STORAGE_KEY);
     } else {
-      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
+      safeSetStorage(CART_STORAGE_KEY, JSON.stringify(items));
     }
   } catch (error) {
-    console.error("Failed to save the guest cart to localStorage:", error);
-    toast.error("Your cart could not be saved on this device.");
+    console.error("Failed to save the guest cart to storage:", error);
   }
 };
 
 const mergeGuestCart = async (uid: string): Promise<CartSyncResult> => {
-  if (typeof window === "undefined") return { synced: false, itemCount: 0 };
-
-  const stored = window.localStorage.getItem(CART_STORAGE_KEY);
+  const stored = safeGetStorage(CART_STORAGE_KEY);
   if (!stored) return { synced: false, itemCount: 0 };
 
   let guestItems: CartItem[];
@@ -195,7 +215,7 @@ const mergeGuestCart = async (uid: string): Promise<CartSyncResult> => {
   }
 
   if (guestItems.length === 0) {
-    window.localStorage.removeItem(CART_STORAGE_KEY);
+    safeRemoveStorage(CART_STORAGE_KEY);
     return { synced: false, itemCount: 0 };
   }
 
@@ -254,8 +274,8 @@ const mergeGuestCart = async (uid: string): Promise<CartSyncResult> => {
   await batch.commit();
 
   // Do not delete a newer cart written while the sync was in progress.
-  if (window.localStorage.getItem(CART_STORAGE_KEY) === stored) {
-    window.localStorage.removeItem(CART_STORAGE_KEY);
+  if (safeGetStorage(CART_STORAGE_KEY) === stored) {
+    safeRemoveStorage(CART_STORAGE_KEY);
   }
 
   return { synced: true, itemCount: guestItems.length };

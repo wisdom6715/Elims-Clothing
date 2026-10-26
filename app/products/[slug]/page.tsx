@@ -662,7 +662,7 @@ export default function ProductsPage() {
                         id: product.id,
                         name: product.name,
                         price: product.price,
-                        imageUrl: product.imageUrls[0],
+                        imageUrl: product.imageUrls?.[0] ?? "",
                       })
                     }
                     addBusy={isAdding(product.id)}
@@ -671,7 +671,7 @@ export default function ProductsPage() {
                         id: product.id,
                         name: product.name,
                         price: product.price,
-                        imageUrl: product.imageUrls[0],
+                        imageUrl: product.imageUrls?.[0] ?? "",
                         stock: product.stock,
                         color:
                           product.colors && product.colors.length > 0
@@ -684,16 +684,73 @@ export default function ProductsPage() {
                 ))}
               </div>
             ) : (
-              <div className="py-16 sm:py-24 text-center">
-                <p className="text-gray-400 text-sm mb-2">
-                  No products match your filters.
-                </p>
-                <button
-                  onClick={clearFilters}
-                  className="text-xs font-semibold text-dark-brown underline underline-offset-2 hover:text-mid-brown transition-colors"
-                >
-                  Clear all filters
-                </button>
+              <div className="py-8 sm:py-12">
+                <div className="max-w-xl mx-auto bg-[#faf7f0] border border-[#e8dfcf] p-7 sm:p-9 rounded-2xl text-center mb-10 shadow-sm">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#865d1d]">
+                    Curated Atelier
+                  </span>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-light text-[#144a3b] mt-2 mb-3">
+                    {breadcrumbLabel}
+                  </h3>
+                  <p className="text-gray-600 text-xs sm:text-sm leading-relaxed mb-6">
+                    Our atelier is actively tailoring new pieces for this collection.
+                    In the meantime, explore our signature ready-to-wear designs below.
+                  </p>
+                  <button
+                    onClick={clearFilters}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#144a3b] text-white px-7 py-3 text-xs font-semibold uppercase tracking-wider hover:bg-[#1f6652] transition-colors"
+                  >
+                    <span>Browse All Available Pieces</span>
+                    <span>→</span>
+                  </button>
+                </div>
+
+                {allProducts.length > 0 && (
+                  <div>
+                    <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-3">
+                      <p className="text-xs uppercase tracking-widest font-semibold text-dark-brown">
+                        Featured Signature Pieces
+                      </p>
+                      <span className="text-xs text-gray-400">
+                        {allProducts.length} pieces available
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-6 sm:gap-y-10">
+                      {allProducts.slice(0, 9).map((product) => (
+                        <ProductCard
+                          key={`fallback-${product.id}`}
+                          product={product}
+                          wishlisted={isWishlisted(product.id)}
+                          wishlistBusy={isMutating(product.id)}
+                          onToggleWishlist={() =>
+                            toggleWishlist({
+                              id: product.id,
+                              name: product.name,
+                              price: product.price,
+                              imageUrl: product.imageUrls?.[0] ?? "",
+                            })
+                          }
+                          addBusy={isAdding(product.id)}
+                          onQuickAdd={() =>
+                            addToCart({
+                              id: product.id,
+                              name: product.name,
+                              price: product.price,
+                              imageUrl: product.imageUrls?.[0] ?? "",
+                              stock: product.stock,
+                              color:
+                                product.colors && product.colors.length > 0
+                                  ? product.colors[0]
+                                  : undefined,
+                              quantity: 1,
+                            })
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

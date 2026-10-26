@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { doc, getDoc } from "firebase/firestore";
 import { useParams, useSearchParams } from "next/navigation";
 import { ChevronDown, ChevronLeft, ChevronRight, Minus, Plus, Ruler, Truck } from "lucide-react";
@@ -93,7 +94,7 @@ export default function ProductDetail() {
   if (notFound || !product) 
     return <main className="store-shell py-28 text-center">
       <p className="font-display text-4xl text-[#0f473a]">This piece is no longer here.</p>
-      <a className="editorial-link mt-6 inline-flex text-[#0f473a]" href="/products/all">Return to the collection</a>
+      <Link className="editorial-link mt-6 inline-flex text-[#0f473a]" href="/products/all">Return to the collection</Link>
     </main>;
   const sizes = product.sizes ?? []; const colors = product.colors ?? []; const gallery = product.imageUrls?.length ? product.imageUrls : [PLACEHOLDER_IMAGE]; const soldOut = product.stock === 0; const customSelected = isCustomSize(selectedSize); const sizeBasePrice = resolveSizePrice(product, selectedSize); const effectivePrice = applyDiscount(sizeBasePrice, discount); const priceChanged = isDiscountActive(discount) && effectivePrice !== sizeBasePrice;
   const handleAddToCart = async () => { if (sizes.length > 0 && !selectedSize) { toast.error("Please select a size."); return; } if (customSelected && (measurements.length === 0 || measurements.some((item) => !item.value.trim()))) { toast.error("Please complete your custom measurements."); return; } if (colors.length > 0 && !selectedColor) { toast.error("Please select a color."); return; } await addToCart({ id: product.id, name: product.name, price: effectivePrice, imageUrl: gallery[0], stock: product.stock, size: selectedSize || undefined, color: selectedColor || undefined, sizeMeasurements: customSelected ? measurements : null, quantity }); };

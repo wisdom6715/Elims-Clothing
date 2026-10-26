@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
 
-interface PageProps {
+export default function CategoryRedirectPage({
+  params,
+}: {
   params: { slug: string };
-}
-
-export const dynamic = "force-dynamic";
-
-export default function Page({ params }: PageProps) {
-  redirect(`/products/${params.slug}`);
+}) {
+  const target = params?.slug ? `/products/${params.slug}` : "/products/all";
+  redirect(target);
 }

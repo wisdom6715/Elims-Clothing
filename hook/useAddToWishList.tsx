@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   collection,
@@ -32,13 +32,14 @@ export interface WishlistInput {
 }
 
 
-const WISHLIST_STORAGE_KEY = "kg_luxee_wishlist";
+const WISHLIST_STORAGE_KEY = "elims_clothings_wishlist";
 
 export function useWishlist() {
   const { user } = useCurrentUser();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [mutatingId, setMutatingId] = useState<string | null>(null);
+  const isHydratedRef = useRef(false);
 
   useEffect(() => {
     if (user) {
@@ -67,17 +68,34 @@ export function useWishlist() {
 
       return () => unsub();
     } else {
-      const storedItems = localStorage.getItem(WISHLIST_STORAGE_KEY);
-      if (storedItems) {
-        setItems(JSON.parse(storedItems));
+      try {
+        if (typeof window !== "undefined") {
+          const storedItems = localStorage.getItem(WISHLIST_STORAGE_KEY);
+          if (storedItems) {
+            const parsed = JSON.parse(storedItems);
+            if (Array.isArray(parsed)) {
+              setItems(parsed);
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Storage restricted or unavailable for guest wishlist:", e);
+      } finally {
+        isHydratedRef.current = true;
+        setLoading(false);
       }
-      setLoading(false);
     }
   }, [user]);
 
   useEffect(() => {
-    if (!user) {
-      localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
+    if (!user && isHydratedRef.current) {
+      try {
+        if (typeof window !== "undefined") {
+          localStorage.setItem(WISHLIST_STORAGE_KEY, JSON.stringify(items));
+        }
+      } catch (e) {
+        console.warn("Could not persist guest wishlist to storage:", e);
+      }
     }
   }, [user, items]);
 
