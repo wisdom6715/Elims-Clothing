@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Return & Exchange Policy — Elims Clothing's",
+  title: "Return & Exchange Policy — Elims Clothings",
   description:
-    "Return window, store credit terms, item condition requirements, final sale exclusions, and return shipping information for Elims Clothing's.",
+    "Return window, store credit terms, item condition requirements, final sale exclusions, and return shipping information for Elims Clothings.",
 };
 
 const EFFECTIVE_DATE = "21 August 2026";
@@ -41,7 +41,7 @@ export default function RefundPolicyPage() {
             </li>
             <li>
               We do not issue cash or credit card refunds. Approved returns
-              receive a digital <strong>Elims Clothing's Store Credit</strong>{" "}
+              receive a digital <strong>Elims Clothings Store Credit</strong>{" "}
               via email, which never expires.
             </li>
             <li>
@@ -74,7 +74,7 @@ export default function RefundPolicyPage() {
             <p>
               We do not issue cash or credit card refunds. Approved returns
               will be issued a digital{" "}
-              <strong>Elims Clothing's Store Credit</strong> sent to you by
+              <strong>Elims Clothings Store Credit</strong> sent to you by
               email.
             </p>
             <p className="mt-4">
@@ -132,11 +132,11 @@ export default function RefundPolicyPage() {
             <p className="mt-4">
               <strong>Mail-in returns:</strong> Customers are responsible for
               their own return shipping arrangements and costs. Elims
-              Clothing's does not provide prepaid return labels.
+              Clothings does not provide prepaid return labels.
             </p>
             <p className="mt-4">
               We highly recommend using a trackable shipping service (like
-              USPS, UPS, or FedEx). Elims Clothing's is not responsible for
+              USPS, UPS, or FedEx). Elims Clothings is not responsible for
               packages that are lost or damaged in transit back to us.
             </p>
           </Section>
@@ -144,7 +144,7 @@ export default function RefundPolicyPage() {
           <Section title="6. Agreement">
             <p>
               By submitting a return, you agree to this Return Policy. You
-              understand that Elims Clothing's does not offer cash or credit
+              understand that Elims Clothings does not offer cash or credit
               card refunds, that all qualified returns receive store credit
               only within 14 days of delivery, and that you are responsible
               for covering your own return shipping costs.

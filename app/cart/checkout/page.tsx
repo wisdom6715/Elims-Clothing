@@ -751,7 +751,7 @@ export default function CheckoutPage() {
                       Privacy Policy
                     </a>
                     . I understand that payment is processed through Stripe
-                    or the payment provider displayed at checkout, and Elims Clothing's
+                    or the payment provider displayed at checkout, and Elims Clothings
                     does not store my full card number, CVV, PIN, or
                     online-banking password.
                   </span>

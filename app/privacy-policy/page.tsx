@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Elims Clothing's",
+  title: "Privacy Policy — Elims Clothings",
   description:
-    "How Elims clothing's collects, uses, shares, stores, and protects personal information under U.S. federal and state privacy laws.",
+    "How Elims Clothings collects, uses, shares, stores, and protects personal information under U.S. federal and state privacy laws.",
 };
 
 const EFFECTIVE_DATE = "21 September 2026";
@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
           <Section title="1. Who controls your data">
             <p>
               elimsclothing, operated by
-              <strong> Elims Clothing's LLC</strong>, is the
+              <strong> Elims Clothings LLC</strong>, is the
               business responsible for personal information collected through
               the elimsclothing website, online store, customer-support
               channels, and related services. Our commercial address is

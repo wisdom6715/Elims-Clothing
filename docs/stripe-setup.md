@@ -1,6 +1,6 @@
 # Stripe Checkout Setup
 
-The storefront retains the existing Kgluxee Next.js and Firebase structure. Stripe is used only on the server to create hosted Checkout Sessions and verify the final payment event. A browser-side Stripe publishable key is therefore not required for this hosted Checkout implementation.
+The storefront retains the existing Elims Clothings Next.js and Firebase structure. Stripe is used only on the server to create hosted Checkout Sessions and verify the final payment event. A browser-side Stripe publishable key is therefore not required for this hosted Checkout implementation.
 
 | Variable | Required purpose | Where it is used |
 | --- | --- | --- |

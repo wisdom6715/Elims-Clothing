@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 // ─── Types ────────────────────────────────────────────────────────────────
 
 type Unit = "in" | "cm";
-type Category = "fitted" | "free" | "kids";
+type Category = "fitted" | "free" | "girls" | "boys";
 
 interface Measured {
   in: string;
@@ -18,7 +18,7 @@ interface Column {
   plain?: boolean; // true = display the raw string value, no unit switching
 }
 
-// ─── Data (transcribed from the Elims Clothing's size charts) ───────────────────────
+// ─── Data (transcribed from the Elims Clothings size charts) ───────────────────────
 
 const FITTED_COLUMNS: Column[] = [
   { key: "size", label: "Size", plain: true },
@@ -61,23 +61,58 @@ const FREE_ROWS: Record<string, string | Measured>[] = [
   { size: "XXL", uk: "22–24", bust: { in: "60", cm: "152" }, waist: { in: "54", cm: "137" }, hip: { in: "60", cm: "152" } },
 ];
 
-const KIDS_COLUMNS: Column[] = [
+const GIRLS_COLUMNS: Column[] = [
+  { key: "size", label: "Size", plain: true },
+  { key: "us", label: "US Size", plain: true },
   { key: "age", label: "Age", plain: true },
   { key: "height", label: "Height" },
   { key: "chest", label: "Chest" },
   { key: "waist", label: "Waist" },
   { key: "hip", label: "Hip" },
-  { key: "dress", label: "Dresses" },
-  { key: "trousers", label: "Trousers" },
-  { key: "romper", label: "Romper" },
+  { key: "shoulder", label: "Shoulder" },
+  { key: "sleeve", label: "Sleeve" },
+  { key: "length", label: "Dress Length" },
 ];
 
-const KIDS_ROWS: Record<string, string | Measured>[] = [
-  { age: "2–3 yrs", height: { in: "36.2–38.6", cm: "92–98" }, chest: { in: "21.3", cm: "54" }, waist: { in: "20.1", cm: "51" }, hip: { in: "22.4", cm: "57" }, dress: { in: "20.5–22.0", cm: "52–56" }, trousers: { in: "19.7–21.7", cm: "50–55" }, romper: { in: "18.9–20.5", cm: "48–52" } },
-  { age: "4–5 yrs", height: { in: "40.9–43.3", cm: "104–110" }, chest: { in: "22.8", cm: "58" }, waist: { in: "20.9", cm: "53" }, hip: { in: "24.4", cm: "62" }, dress: { in: "22.8–24.4", cm: "58–62" }, trousers: { in: "22.0–24.4", cm: "56–62" }, romper: { in: "21.3–22.8", cm: "54–58" } },
-  { age: "6–7 yrs", height: { in: "45.7–48.0", cm: "116–122" }, chest: { in: "24.4", cm: "62" }, waist: { in: "22.0", cm: "56" }, hip: { in: "26.0", cm: "66" }, dress: { in: "25.2–26.8", cm: "64–68" }, trousers: { in: "24.4–26.8", cm: "62–68" }, romper: { in: "23.6–25.2", cm: "60–64" } },
-  { age: "8–9 yrs", height: { in: "50.4–52.8", cm: "128–134" }, chest: { in: "26.4", cm: "67" }, waist: { in: "23.6", cm: "60" }, hip: { in: "28.3", cm: "72" }, dress: { in: "27.6–29.1", cm: "70–74" }, trousers: { in: "26.8–29.1", cm: "68–74" }, romper: { in: "26.0–27.6", cm: "66–70" } },
-  { age: "10–12 yrs", height: { in: "55.1–59.8", cm: "140–152" }, chest: { in: "29.9", cm: "76" }, waist: { in: "26.0", cm: "66" }, hip: { in: "31.9", cm: "81" }, dress: { in: "29.9–32.3", cm: "76–82" }, trousers: { in: "29.1–32.3", cm: "74–82" }, romper: { in: "28.3–30.7", cm: "72–78" } },
+const GIRLS_ROWS: Record<string, string | Measured>[] = [
+  { size: "XXS", us: "2T", age: "2 yrs", height: { in: "33–35", cm: "84–89" }, chest: { in: "20–21", cm: "51–53" }, waist: { in: "19.5–20", cm: "50–51" }, hip: { in: "20–21", cm: "51–53" }, shoulder: { in: "8.5–9", cm: "22–23" }, sleeve: { in: "11–12", cm: "28–30" }, length: { in: "18–19", cm: "46–48" } },
+  { size: "XS", us: "3T", age: "3 yrs", height: { in: "36–38", cm: "91–97" }, chest: { in: "21–22", cm: "53–56" }, waist: { in: "20–20.5", cm: "51–52" }, hip: { in: "21–22", cm: "53–56" }, shoulder: { in: "9–9.5", cm: "23–24" }, sleeve: { in: "12–13", cm: "30–33" }, length: { in: "20–21", cm: "51–53" } },
+  { size: "XS", us: "4T", age: "4 yrs", height: { in: "39–41", cm: "99–104" }, chest: { in: "22–23", cm: "56–58" }, waist: { in: "20.5–21", cm: "52–53" }, hip: { in: "22–23", cm: "56–58" }, shoulder: { in: "9.5–10", cm: "24–25" }, sleeve: { in: "13–14", cm: "33–36" }, length: { in: "22–23", cm: "56–58" } },
+  { size: "S", us: "5", age: "5 yrs", height: { in: "42–44", cm: "107–112" }, chest: { in: "23–24", cm: "58–61" }, waist: { in: "21–21.5", cm: "53–55" }, hip: { in: "23–24", cm: "58–61" }, shoulder: { in: "10–10.5", cm: "25–27" }, sleeve: { in: "14–15", cm: "36–38" }, length: { in: "24–25", cm: "61–64" } },
+  { size: "S", us: "6", age: "6 yrs", height: { in: "45–47", cm: "114–119" }, chest: { in: "24–25", cm: "61–64" }, waist: { in: "21.5–22", cm: "55–56" }, hip: { in: "24–25", cm: "61–64" }, shoulder: { in: "10.5–11", cm: "27–28" }, sleeve: { in: "15–16", cm: "38–41" }, length: { in: "26–27", cm: "66–69" } },
+  { size: "M", us: "7", age: "7 yrs", height: { in: "48–50", cm: "122–127" }, chest: { in: "25–26", cm: "64–66" }, waist: { in: "22–23", cm: "56–58" }, hip: { in: "25–26.5", cm: "64–67" }, shoulder: { in: "11–11.5", cm: "28–29" }, sleeve: { in: "16–17", cm: "41–43" }, length: { in: "28–29", cm: "71–74" } },
+  { size: "M", us: "8", age: "8 yrs", height: { in: "51–53", cm: "130–135" }, chest: { in: "26–27.5", cm: "66–70" }, waist: { in: "23–24", cm: "58–61" }, hip: { in: "26.5–28", cm: "67–71" }, shoulder: { in: "11.5–12", cm: "29–30" }, sleeve: { in: "17–18", cm: "43–46" }, length: { in: "30–31", cm: "76–79" } },
+  { size: "L", us: "10", age: "9–10 yrs", height: { in: "54–56", cm: "137–142" }, chest: { in: "27.5–29", cm: "70–74" }, waist: { in: "24–25", cm: "61–64" }, hip: { in: "28–30", cm: "71–76" }, shoulder: { in: "12–12.5", cm: "30–32" }, sleeve: { in: "18–19", cm: "46–48" }, length: { in: "32–34", cm: "81–86" } },
+  { size: "L", us: "12", age: "11–12 yrs", height: { in: "57–59", cm: "145–150" }, chest: { in: "29–30.5", cm: "74–77" }, waist: { in: "25–26", cm: "64–66" }, hip: { in: "30–32", cm: "76–81" }, shoulder: { in: "12.5–13", cm: "32–33" }, sleeve: { in: "19–20", cm: "48–51" }, length: { in: "35–37", cm: "89–94" } },
+  { size: "XL", us: "14", age: "13–14 yrs", height: { in: "60–62", cm: "152–157" }, chest: { in: "30.5–32", cm: "77–81" }, waist: { in: "26–27", cm: "66–69" }, hip: { in: "32–34", cm: "81–86" }, shoulder: { in: "13–13.5", cm: "33–34" }, sleeve: { in: "20–21", cm: "51–53" }, length: { in: "38–40", cm: "97–102" } },
+  { size: "XXL", us: "16", age: "15–16 yrs", height: { in: "63–65", cm: "160–165" }, chest: { in: "32–34", cm: "81–86" }, waist: { in: "27–28.5", cm: "69–72" }, hip: { in: "34–36", cm: "86–91" }, shoulder: { in: "13.5–14", cm: "34–36" }, sleeve: { in: "21–22", cm: "53–56" }, length: { in: "41–43", cm: "104–109" } },
+];
+
+const BOYS_COLUMNS: Column[] = [
+  { key: "size", label: "Size", plain: true },
+  { key: "us", label: "US Size", plain: true },
+  { key: "age", label: "Age", plain: true },
+  { key: "height", label: "Height" },
+  { key: "chest", label: "Chest" },
+  { key: "waist", label: "Waist" },
+  { key: "hip", label: "Hip" },
+  { key: "shoulder", label: "Shoulder" },
+  { key: "sleeve", label: "Sleeve" },
+  { key: "length", label: "Trouser Inseam" },
+];
+
+const BOYS_ROWS: Record<string, string | Measured>[] = [
+  { size: "XXS", us: "2T", age: "2 yrs", height: { in: "33–35", cm: "84–89" }, chest: { in: "20–21", cm: "51–53" }, waist: { in: "19.5–20", cm: "50–51" }, hip: { in: "20–21", cm: "51–53" }, shoulder: { in: "8.5–9", cm: "22–23" }, sleeve: { in: "11–12", cm: "28–30" }, length: { in: "12–13", cm: "30–33" } },
+  { size: "XS", us: "3T", age: "3 yrs", height: { in: "36–38", cm: "91–97" }, chest: { in: "21–22", cm: "53–56" }, waist: { in: "20–20.5", cm: "51–52" }, hip: { in: "21–22", cm: "53–56" }, shoulder: { in: "9–9.5", cm: "23–24" }, sleeve: { in: "12–13", cm: "30–33" }, length: { in: "14–15", cm: "36–38" } },
+  { size: "XS", us: "4T", age: "4 yrs", height: { in: "39–41", cm: "99–104" }, chest: { in: "22–23", cm: "56–58" }, waist: { in: "20.5–21", cm: "52–53" }, hip: { in: "22–23", cm: "56–58" }, shoulder: { in: "9.5–10", cm: "24–25" }, sleeve: { in: "13–14", cm: "33–36" }, length: { in: "16–17", cm: "41–43" } },
+  { size: "S", us: "5", age: "5 yrs", height: { in: "42–44", cm: "107–112" }, chest: { in: "23–24", cm: "58–61" }, waist: { in: "21–21.5", cm: "53–55" }, hip: { in: "23–24", cm: "58–61" }, shoulder: { in: "10–10.5", cm: "25–27" }, sleeve: { in: "14–15", cm: "36–38" }, length: { in: "18–19", cm: "46–48" } },
+  { size: "S", us: "6", age: "6 yrs", height: { in: "45–47", cm: "114–119" }, chest: { in: "24–25", cm: "61–64" }, waist: { in: "21.5–22", cm: "55–56" }, hip: { in: "24–25", cm: "61–64" }, shoulder: { in: "10.5–11", cm: "27–28" }, sleeve: { in: "15–16", cm: "38–41" }, length: { in: "20–21", cm: "51–53" } },
+  { size: "M", us: "7", age: "7 yrs", height: { in: "48–50", cm: "122–127" }, chest: { in: "25–26", cm: "64–66" }, waist: { in: "22–23", cm: "56–58" }, hip: { in: "25–26.5", cm: "64–67" }, shoulder: { in: "11–11.5", cm: "28–29" }, sleeve: { in: "16–17", cm: "41–43" }, length: { in: "22–23", cm: "56–58" } },
+  { size: "M", us: "8", age: "8 yrs", height: { in: "51–53", cm: "130–135" }, chest: { in: "26–27.5", cm: "66–70" }, waist: { in: "23–24", cm: "58–61" }, hip: { in: "26.5–28", cm: "67–71" }, shoulder: { in: "11.5–12", cm: "29–30" }, sleeve: { in: "17–18", cm: "43–46" }, length: { in: "24–25", cm: "61–64" } },
+  { size: "L", us: "10", age: "9–10 yrs", height: { in: "54–56", cm: "137–142" }, chest: { in: "27.5–29", cm: "70–74" }, waist: { in: "24–25", cm: "61–64" }, hip: { in: "28–30", cm: "71–76" }, shoulder: { in: "12–12.5", cm: "30–32" }, sleeve: { in: "18–19", cm: "46–48" }, length: { in: "26–27", cm: "66–69" } },
+  { size: "L", us: "12", age: "11–12 yrs", height: { in: "57–59", cm: "145–150" }, chest: { in: "29–30.5", cm: "74–77" }, waist: { in: "25–26", cm: "64–66" }, hip: { in: "30–32", cm: "76–81" }, shoulder: { in: "12.5–13", cm: "32–33" }, sleeve: { in: "19–20", cm: "48–51" }, length: { in: "28–29", cm: "71–74" } },
+  { size: "XL", us: "14", age: "13–14 yrs", height: { in: "60–62", cm: "152–157" }, chest: { in: "30.5–32", cm: "77–81" }, waist: { in: "26–27", cm: "66–69" }, hip: { in: "32–34", cm: "81–86" }, shoulder: { in: "13–13.5", cm: "33–34" }, sleeve: { in: "20–21", cm: "51–53" }, length: { in: "30–31", cm: "76–79" } },
+  { size: "XXL", us: "16", age: "15–16 yrs", height: { in: "63–65", cm: "160–165" }, chest: { in: "32–34", cm: "81–86" }, waist: { in: "27–28.5", cm: "69–72" }, hip: { in: "34–36", cm: "86–91" }, shoulder: { in: "13.5–14", cm: "34–36" }, sleeve: { in: "21–22", cm: "53–56" }, length: { in: "32–33", cm: "81–84" } },
 ];
 
 const HOW_TO_MEASURE: Record<Category, { label: string; body: string }[]> = {
@@ -92,11 +127,17 @@ const HOW_TO_MEASURE: Record<Category, { label: string; body: string }[]> = {
     { label: "Waist", body: "Measure around the smallest part of your waist." },
     { label: "Hip", body: "Measure around the fullest part of your hips." },
   ],
-  kids: [
+  girls: [
     { label: "Height", body: "Measure from the top of the head to the floor without shoes." },
     { label: "Chest", body: "Measure around the fullest part of the chest." },
     { label: "Waist", body: "Measure around the natural waistline." },
-    { label: "Hip", body: "Measure around the fullest part of the hips." },
+    { label: "Dress Length", body: "Measure from the shoulder down to the desired hemline." },
+  ],
+  boys: [
+    { label: "Height", body: "Measure from the top of the head to the floor without shoes." },
+    { label: "Chest", body: "Measure around the fullest part of the chest." },
+    { label: "Waist", body: "Measure around the natural waistline." },
+    { label: "Trouser Inseam", body: "Measure from the crotch seam along the inside leg to the ankle." },
   ],
 };
 
@@ -168,7 +209,8 @@ function SizeTable({
 const CATEGORY_LABELS: { key: Category; label: string }[] = [
   { key: "fitted", label: "Fitted Outfits" },
   { key: "free", label: "Free Styles" },
-  { key: "kids", label: "Kids" },
+  { key: "girls", label: "Girls (2T–16)" },
+  { key: "boys", label: "Boys (2T–16)" },
 ];
 
 export default function SizeGuideModal({
@@ -217,8 +259,21 @@ export default function SizeGuideModal({
   if (!shouldRender) return null;
 
   const columns =
-    category === "fitted" ? FITTED_COLUMNS : category === "free" ? FREE_COLUMNS : KIDS_COLUMNS;
-  const rows = category === "fitted" ? FITTED_ROWS : category === "free" ? FREE_ROWS : KIDS_ROWS;
+    category === "fitted"
+      ? FITTED_COLUMNS
+      : category === "free"
+      ? FREE_COLUMNS
+      : category === "girls"
+      ? GIRLS_COLUMNS
+      : BOYS_COLUMNS;
+  const rows =
+    category === "fitted"
+      ? FITTED_ROWS
+      : category === "free"
+      ? FREE_ROWS
+      : category === "girls"
+      ? GIRLS_ROWS
+      : BOYS_ROWS;
 
   return (
     <div
@@ -253,15 +308,15 @@ export default function SizeGuideModal({
           </button>
 
           <div className="flex items-center gap-3">
-            <span className="flex-shrink-0 w-10 h-10 rounded-full border border-white/40 flex items-center justify-center text-white font-serif text-sm tracking-wide">
-              KG
+            <span className="flex-shrink-0 w-10 h-10 rounded-full border border-white/40 flex items-center justify-center text-white font-serif text-sm font-semibold tracking-wide">
+              EC
             </span>
             <div>
               <p className="font-serif text-xl sm:text-2xl text-white leading-tight">
                 Size Guide
               </p>
               <p className="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-neutral-400">
-                Luxury in every detail
+                Elims Clothings — Luxury in every detail
               </p>
             </div>
           </div>

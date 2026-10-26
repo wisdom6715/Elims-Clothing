@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import {
@@ -86,16 +87,10 @@ export default function LoginPage() {
       {/* Left — Form */}
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-10 md:px-20 py-12 bg-white">
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-10">
-          <div className="w-7 h-7 rounded-sm flex items-center justify-center bg-[#C9A96E]"  >
-            <svg viewBox="0 0 20 20" className="w-4 h-4 fill-white">
-              <rect x="2" y="2" width="7" height="7" rx="1" />
-              <rect x="11" y="2" width="7" height="7" rx="1" />
-              <rect x="2" y="11" width="7" height="7" rx="1" />
-            </svg>
-          </div>
-          <span className="text-lg font-bold text-gray-900 tracking-wide">Elims Clothing's</span>
-        </div>
+        <Link href="/" className="flex items-center gap-3 mb-10">
+          <Image src="/logo.png" alt="Elims Clothings" width={48} height={30} className="h-8 w-auto object-contain" />
+          <span className="text-lg font-bold text-gray-900 tracking-wide">Elims Clothings</span>
+        </Link>
 
         {/* Heading */}
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Login to your account</h1>
@@ -231,7 +226,7 @@ export default function LoginPage() {
                 <rect x="2" y="11" width="7" height="7" rx="1" />
               </svg>
             </div>
-            <span className="text-2xl font-bold text-white tracking-wider">Elims Clothing's</span>
+            <span className="text-2xl font-bold text-white tracking-wider">Elims Clothings</span>
             <div className="w-px h-8 bg-white/30 mx-1" />
             <span className="text-white/80 text-sm font-light leading-tight">
               Home of premium<br />Designs

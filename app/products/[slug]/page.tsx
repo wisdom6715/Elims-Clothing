@@ -465,36 +465,65 @@ export default function ProductsPage() {
     setPage(1);
   };
 
-  // Breadcrumb label — use stored subCategory string if we can find a match,
+  // Match category or subcategory straightforwardly
+  const matchCategory = (p: Product, targetSlug: string) => {
+    const target = toSlug(targetSlug);
+    if (!target || target === "all") return true;
+
+    const cat = toSlug(p.category || "");
+    const sub = toSlug(p.subCategory || "");
+
+    // Direct match against category or subCategory
+    if (cat === target || sub === target) return true;
+
+    // Handle common synonyms and plurals
+    if (target === "children" && (cat === "kids" || sub === "kids")) return true;
+    if (target === "kids" && (cat === "children" || sub === "children")) return true;
+    if (target === "accessories" && (cat === "accessory" || sub === "accessory")) return true;
+
+    return false;
+  };
+
+  // Breadcrumb label — use stored category/subCategory string if we can find a match,
   // otherwise humanise the slug
   const breadcrumbLabel = useMemo(() => {
     if (isAll) return "All Products";
-    const match = allProducts.find((p) => toSlug(p.subCategory) === slug);
-    return match?.subCategory ?? slug.replace(/-/g, " ");
+    const target = toSlug(slug);
+    if (target === "men") return "Men's Collection";
+    if (target === "women") return "Women's Collection";
+    if (target === "children" || target === "kids") return "Children's Collection";
+    if (target === "accessories") return "Accessories";
+
+    const match = allProducts.find((p) => matchCategory(p, slug));
+    return match?.category && toSlug(match.category) === target
+      ? match.category
+      : match?.subCategory && toSlug(match.subCategory) === target
+      ? match.subCategory
+      : slug.replace(/-/g, " ");
   }, [allProducts, slug, isAll]);
 
   // Max price driven by products currently in scope (not all products)
   const maxPrice = useMemo(() => {
     const scope = isAll
       ? allProducts
-      : allProducts.filter((p) => toSlug(p.subCategory) === slug);
+      : allProducts.filter((p) => matchCategory(p, slug));
     const prices = scope.map((p) => p.price);
     return prices.length > 0 ? Math.max(...prices) : MAX_PRICE;
   }, [allProducts, slug, isAll]);
 
   const filtered = useMemo(() => {
-    // Scope: all products or only those matching the subcategory slug
+    // Scope: all products or only those matching the category/subcategory slug
     let list = isAll
       ? [...allProducts]
-      : allProducts.filter((p) => toSlug(p.subCategory) === slug);
+      : allProducts.filter((p) => matchCategory(p, slug));
 
     // Sidebar filters
     if (selectedSizes.length > 0)
-      list = list.filter((p) => p.sizes.some((s) => selectedSizes.includes(s)));
+      list = list.filter((p) => p.sizes?.some((s) => selectedSizes.includes(s)));
 
     if (selectedColor)
       list = list.filter((p) =>
-        p.colors.some((c) => c.toLowerCase() === selectedColor)
+        p.colors?.some((c) => c.toLowerCase() === selectedColor)
       );
 
     list = list.filter((p) => p.price <= priceRange);

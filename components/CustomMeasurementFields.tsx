@@ -8,7 +8,16 @@ export interface Measurement {
   value: string;
 }
 
-export const MEASUREMENT_OPTIONS = ["Shoulder", "Burst", "Waist", "Hip"];
+export const MEASUREMENT_OPTIONS = [
+  "Chest / Bust",
+  "Waist",
+  "Hip",
+  "Shoulder",
+  "Height",
+  "Sleeve Length",
+  "Dress Length",
+  "Trouser Inseam",
+];
 
 interface CustomMeasurementFieldsProps {
   measurements: Measurement[];

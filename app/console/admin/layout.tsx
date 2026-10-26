@@ -3,8 +3,8 @@ import AdminSidebar from "./_component/SideBar";
 import AuthGuard from "./_component/AuthGuard";
 
 export const metadata: Metadata = {
-  title: "Elims clothing's — Luxury in every deatil",
-  description: "Luxury in every deatil",
+  title: "Elims Clothings — Luxury in every detail",
+  description: "Luxury in every detail",
 };
 
 export default function RootLayout({

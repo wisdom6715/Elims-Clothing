@@ -63,10 +63,11 @@ export default function Header() {
         >
           <Image
             src="/logo1.png"
-            alt="Elims"
-            width={100}
-            height={50}
-            className="h-14 w-16 md:h-16 md:w-20"
+            alt="Elims Clothings"
+            width={120}
+            height={70}
+            priority
+            className="h-12 w-auto md:h-14 object-contain cursor-pointer"
           />
         </Link>
 

@@ -4,15 +4,14 @@ import { Resend } from "resend";
 import { getAdminDb } from "@/lib/firebase-admin";
 
 // ─── Brand config ────────────────────────────────────────────────────────────
-const BRAND = "Elims Clothing's";
+const BRAND = "Elims Clothings";
 const BRAND_COLOR = "#A07840";
 // The sending domain must be verified in Resend. Swap it if you move to an Elims domain.
-const FROM = `${BRAND} Orders <noreply@kgluxee.store>`;
+const FROM = `${BRAND} Orders <noreply@elimsclothings.store>`;
 const ADMIN_ORDER_EMAIL = "olayiwolaibrahim46@gmail.com";
-// TODO: replace with the Elims Clothing's logo
+// Elims Clothings logo
 const LOGO_URL =
   "https://firebasestorage.googleapis.com/v0/b/elims-clothing.firebasestorage.app/o/image.png?alt=media&token=c9bfafea-c3a7-4eb9-ae02-1d530c697302";
-// TODO: fill in the founder's name
 const FOUNDER_SIGNATURE = `— Bukola Salako, Founder & CEO, ${BRAND}`;
 
 // Created lazily so a missing key can't crash the build

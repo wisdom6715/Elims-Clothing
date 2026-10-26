@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service — elimsclothing's",
+  title: "Terms of Service — Elims Clothings",
   description:
-    "The terms governing purchases, payments, delivery, returns, and use of the elimsclothing's website.",
+    "The terms governing purchases, payments, delivery, returns, and use of the Elims Clothings website.",
 };
 
 const EFFECTIVE_DATE = "21 September 2026";
@@ -37,11 +37,11 @@ export default function TermsOfServicePage() {
           <Section title="1. Who we are">
             <p>
               These Terms of Service (the <strong>“Terms”</strong>) govern your
-              use of the elimsclothing's website, digital showroom, customer support
+              use of the Elims Clothings website, digital showroom, customer support
               channels, and online store (together, the{" "}
               <strong>“Services”</strong>). The Services are operated by
-              elimsclothing's, a business operated by{" "}
-              <strong> Elims Clothing's LLC</strong>, with its
+              Elims Clothings, a business operated by{" "}
+              <strong> Elims Clothings LLC</strong>, with its
               principal commercial address at{" "}
               <strong>{BUSINESS_ADDRESS}</strong>.
             </p>
@@ -125,7 +125,7 @@ export default function TermsOfServicePage() {
             </p>
             <p className="mt-4">
               Payments are processed by Stripe or another payment provider
-              displayed at checkout. elimsclothing's does not request or store your full
+              displayed at checkout. Elims Clothings does not request or store your full
               card number, CVV, PIN, or online-banking password. You must use a
               payment method that you are authorized to use. Suspected fraud may
               be reported to the payment provider or relevant authorities.
@@ -133,7 +133,7 @@ export default function TermsOfServicePage() {
             <p className="mt-4">
               Your bank, card issuer, payment provider, or foreign-exchange
               provider may apply separate conversion fees or charges. Those
-              third-party charges are not controlled by elimsclothing's. Nothing
+              third-party charges are not controlled by Elims Clothings. Nothing
               in these Terms limits any billing-dispute or chargeback rights you
               have under federal law, such as the Fair Credit Billing Act, or
               under your card issuer&apos;s rules.
@@ -159,7 +159,7 @@ export default function TermsOfServicePage() {
               delivery and customs information and paying import duties, customs
               charges, destination taxes, brokerage charges, and other charges
               imposed by the destination country unless checkout expressly
-              states that elimsclothing's has included them. We cannot guarantee
+              states that Elims Clothings has included them. We cannot guarantee
               that a destination authority will not delay, inspect, or refuse a
               shipment.
             </p>
@@ -189,9 +189,9 @@ export default function TermsOfServicePage() {
 
           <Section title="8. Intellectual property and permitted use">
             <p>
-              The elimsclothing's name, logos, designs, photographs, text, product
+              The Elims Clothings name, logos, designs, photographs, text, product
               descriptions, software, layouts, and other content are owned by or
-              licensed to elimsclothing's and are protected by applicable intellectual
+              licensed to Elims Clothings and are protected by applicable intellectual
               property laws, including U.S. copyright and trademark law. We grant
               you a limited, revocable, non-exclusive right to use the Services
               for personal, lawful shopping purposes.
@@ -223,7 +223,7 @@ export default function TermsOfServicePage() {
               misconduct, death or personal injury caused by negligence, or your
               non-waivable consumer rights under federal and state law. Subject
               to that limitation, and TO THE MAXIMUM EXTENT PERMITTED BY
-              APPLICABLE LAW, elimsclothing's will not be liable for indirect,
+              APPLICABLE LAW, Elims Clothings will not be liable for indirect,
               incidental, special, or consequential losses. Our total liability
               for a claim connected with an order will not exceed the amount you
               paid for that order. Some states do not allow the exclusion of
@@ -272,7 +272,7 @@ export default function TermsOfServicePage() {
             <p className="mt-4">
               Legal notices and customer-support requests should be sent to:
               <br />
-              <strong>ELIMS CLOTHING'S LLC</strong>
+              <strong>ELIMS CLOTHINGS LLC</strong>
               <br />
               {BUSINESS_ADDRESS}
               <br />

@@ -8,13 +8,10 @@ export const navItems: NavItem[] = [
 
 export const subNavItems: NavItem[] = [
   { label: "All", href: "/products/all" },
-  { label: "Women", href: "/category/women" },
-  { label: "Men", href: "/category/men" },
-  { label: "Children", href: "/category/children" },
-  { label: "Fabrics", href: "/category/fabrics" },
-  { label: "Accessories", href: "/category/accessories" },
-  { label: "Occasion", href: "/category/occasion" },
-  // { label: "Custom", href: "/category/custom-wear" },
+  { label: "Women", href: "/products/women" },
+  { label: "Men", href: "/products/men" },
+  { label: "Children", href: "/products/children" },
+  { label: "Accessories", href: "/products/accessories" },
 ];
 
 export const hero = {
@@ -48,31 +45,31 @@ export const categoryTabs = ["All", "Women","Men", "Children"];
 export const categories: Category[] = [
   {
     id: "cat-1",
-    label: "Shoes",
-    image: "/images/footwear.png",
-    tag: "SHOES",
-    href: "/category/children"
+    label: "Children",
+    image: "/campaign/elims-kids-summer.jpg",
+    tag: "CHILDREN",
+    href: "/products/children"
   },
   {
     id: "cat-2",
     label: "Accessories",
     image: "/images/jewellery.jpg",
     tag: "ACCESSORIES",
-    href: "/category/accessories"
+    href: "/products/accessories"
   },
   {
     id: "cat-3",
-    label: "Bags",
-    image: "/images/accessories.png",
-    tag: "BAG",
-    href: "/category/accessories"
+    label: "Women",
+    image: "/campaign/elims-women-summer.jpg",
+    tag: "WOMEN",
+    href: "/products/women"
   },
   {
     id: "cat-4",
-    label: "men",
-    image: "/images/men-category.png",
-    tag: "Men",
-    href: "/category/men"
+    label: "Men",
+    image: "/campaign/elims-men-heritage.jpg",
+    tag: "MEN",
+    href: "/products/men"
   },
 ];
 

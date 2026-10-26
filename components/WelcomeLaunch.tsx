@@ -56,7 +56,7 @@ export default function WelcomeLaunchPopup() {
         <div className="relative h-72 w-full">
           <Image
             src="/ceo.jpeg"
-            alt="Founder & CEO of Elims Clothing's"
+            alt="Founder & CEO of Elims Clothings"
             fill
             className="object-cover object-top opacity-90"
             priority
@@ -69,7 +69,7 @@ export default function WelcomeLaunchPopup() {
             A Note From Our Founder
           </p>
           <h2 className="mt-2 font-serif text-2xl text-[#F5EFE6]">
-            Welcome to Elims Clothing's
+            Welcome to Elims Clothings
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-[#A8A29E]">
             Thank you for stopping by. Enjoy 10% off your first order as our

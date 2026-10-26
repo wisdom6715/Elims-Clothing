@@ -67,7 +67,7 @@ export default function AdminSidebar() {
     <>
       {/* Mobile top bar */}
       <div className="lg:hidden flex items-center justify-between px-4 py-3.5 bg-[#EDE6D8] border-b border-[#DCD2BC] sticky top-0 z-40">
-        <Image src={'/logo.png'} alt="logo" width={100} height={80} className="md:w-24 md:h-24 w-16 h-16" onClick={()=> router.push('/')}/>
+        <Image src={'/logo.png'} alt="Elims Clothings logo" width={120} height={70} className="h-10 w-auto object-contain cursor-pointer" onClick={()=> router.push('/')}/>
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
@@ -87,7 +87,7 @@ export default function AdminSidebar() {
           />
           <aside className="relative w-72 max-w-[80vw] min-h-screen bg-[#EDE6D8] border-r border-[#DCD2BC] flex flex-col">
             <div className="flex items-center justify-between px-6 pt-6 pb-6">
-              <Image src={'/logo.png'} alt="logo" width={100} height={80} className="md:w-24 md:h-24 w-16 h-16" onClick={()=> router.push('/')}/>
+              <Image src={'/logo.png'} alt="Elims Clothings logo" width={120} height={70} className="h-10 w-auto object-contain cursor-pointer" onClick={()=> router.push('/')}/>
               <button
                 type="button"
                 onClick={() => setMobileOpen(false)}
@@ -120,7 +120,7 @@ export default function AdminSidebar() {
       <aside className="hidden lg:flex w-64 shrink-0 min-h-screen bg-[#EDE6D8] border-r border-[#DCD2BC] flex-col">
         {/* Brand */}
         <div className="px-6 pt-7 pb-6">
-          <Image src={'/logo.png'} alt="logo" width={100} height={80} className="md:w-24 md:h-24 w-16 h-16" onClick={()=> router.push('/')}/>
+          <Image src={'/logo.png'} alt="Elims Clothings logo" width={140} height={80} className="h-12 w-auto object-contain cursor-pointer" onClick={()=> router.push('/')}/>
         </div>
 
         {/* Nav */}

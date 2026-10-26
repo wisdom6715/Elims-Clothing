@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, ChevronDown } from "lucide-react";
 import {
@@ -109,7 +110,7 @@ export default function SignupPage() {
         // Auth succeeded, so still continue — just log it
         }
 
-        toast.success("Account created successfully! Welcome to Elims Clothing's 🎉");
+        toast.success("Account created successfully! Welcome to Elims Clothings 🎉");
         router.push("/");
 
     } catch (err) {
@@ -169,16 +170,10 @@ export default function SignupPage() {
       <div className="w-full lg:w-1/2 flex flex-col justify-center px-10 md:px-20 py-12 bg-white">
 
         {/* Logo */}
-        <div className="flex items-center gap-2 mb-10">
-          <div className="w-7 h-7 rounded-sm flex items-center justify-center bg-[#b9cea9]">
-            <svg viewBox="0 0 20 20" className="w-4 h-4 fill-white">
-              <rect x="2"  y="2"  width="7" height="7" rx="1" />
-              <rect x="11" y="2"  width="7" height="7" rx="1" />
-              <rect x="2"  y="11" width="7" height="7" rx="1" />
-            </svg>
-          </div>
-          <span className="text-lg font-bold text-gray-900 tracking-wide">Elims Clothing's</span>
-        </div>
+        <Link href="/" className="flex items-center gap-3 mb-10">
+          <Image src="/logo.png" alt="Elims Clothings" width={48} height={30} className="h-8 w-auto object-contain" />
+          <span className="text-lg font-bold text-gray-900 tracking-wide">Elims Clothings</span>
+        </Link>
 
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Create an account</h1>
         <p className="text-sm text-gray-500 mb-8">Welcome! Please enter your details.</p>

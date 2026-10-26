@@ -4,12 +4,12 @@ import { Resend } from "resend";
 import { getAdminDb } from "@/lib/firebase-admin";
 
 // ─── Brand config ────────────────────────────────────────────────────────────
-const BRAND = "Elims Clothing's";
+const BRAND = "Elims Clothings";
 // Public site origin the review link is built against
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://elimsclothings.store";
 // The sending domain must be verified in Resend
-const FROM = `${BRAND} Orders <noreply@kgluxee.store>`;
-// TODO: replace with the Elims Clothing's logo
+const FROM = `${BRAND} Orders <noreply@elimsclothings.store>`;
+// Elims Clothings logo
 const LOGO_URL =
   "https://firebasestorage.googleapis.com/v0/b/elims-clothing.firebasestorage.app/o/image.png?alt=media&token=c9bfafea-c3a7-4eb9-ae02-1d530c697302";
 

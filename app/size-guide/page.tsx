@@ -3,6 +3,8 @@ import { Playfair_Display, Inter } from "next/font/google";
 import {
   fittedSizes,
   freeSizes,
+  girlsSizes,
+  boysSizes,
   lengthOptions,
   measureSteps,
   features,
@@ -36,6 +38,7 @@ export default function SizeGuidePage() {
         <FittedOutfitsSection />
         <LengthOptionsSection />
         <FreeStylesSection />
+        <KidsSizeSection />
         <HowToMeasureSection />
         <FeaturesBar />
       </div>
@@ -238,7 +241,7 @@ function FreeStylesSection() {
             <thead>
               <tr className="bg-[#111110] text-[#F5F2EA]">
                 <th className="px-5 py-3 text-[11px] font-medium uppercase tracking-wider">
-                  Nextgen Size
+                  Elims Size
                 </th>
                 <th className="px-5 py-3 text-[11px] font-medium uppercase tracking-wider">
                   UK Size
@@ -297,6 +300,119 @@ function FreeStylesSection() {
             Free styles are designed for comfort and flow. Measurements are the body size
             range the style can fit. The wider the style, the more relaxed the fit.
           </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function KidsSizeSection() {
+  const [activeTab, setActiveTab] = useState<"girls" | "boys">("girls");
+
+  return (
+    <section className="pb-12 sm:pb-16">
+      <div className="overflow-hidden rounded-sm border border-[#E7E2D6]">
+        <SectionBand
+          eyebrow="Girls &amp; Boys Collection (Ages 2 – 16)"
+          title="Children's Size Guide"
+        />
+
+        {/* Tab switcher */}
+        <div className="flex border-b border-[#E7E2D6] bg-white">
+          <button
+            type="button"
+            onClick={() => setActiveTab("girls")}
+            className={`flex-1 py-3 text-center text-xs font-semibold uppercase tracking-wider transition-colors ${
+              activeTab === "girls"
+                ? "border-b-2 border-[#111110] bg-[#FAF8F3] text-[#111110]"
+                : "text-[#6E6C63] hover:text-[#111110]"
+            }`}
+          >
+            Girls&apos; Size Chart
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("boys")}
+            className={`flex-1 py-3 text-center text-xs font-semibold uppercase tracking-wider transition-colors ${
+              activeTab === "boys"
+                ? "border-b-2 border-[#111110] bg-[#FAF8F3] text-[#111110]"
+                : "text-[#6E6C63] hover:text-[#111110]"
+            }`}
+          >
+            Boys&apos; Size Chart
+          </button>
+        </div>
+
+        {/* Desktop / tablet table */}
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full min-w-[760px] border-collapse text-left">
+            <thead>
+              <tr className="bg-[#111110] text-[#F5F2EA]">
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Size</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">US Size</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Age</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Height (in | cm)</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Chest (in | cm)</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Waist (in | cm)</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Hip (in | cm)</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Shoulder (in | cm)</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">Sleeve (in | cm)</th>
+                <th className="px-3 py-3 text-[11px] font-medium uppercase tracking-wider">
+                  {activeTab === "girls" ? "Suggested Dress Length" : "Trouser Inseam"}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(activeTab === "girls" ? girlsSizes : boysSizes).map((s, i) => (
+                <tr key={`${s.size}-${s.usSize}`} className={i % 2 === 0 ? "bg-white" : "bg-[#F5F2EA]"}>
+                  <td className="px-3 py-3 font-serif text-sm font-semibold">{s.size}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.usSize}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.age} yrs</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.height.in} | {s.height.cm}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.chest.in} | {s.chest.cm}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.waist.in} | {s.waist.cm}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.hip.in} | {s.hip.cm}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.shoulder.in} | {s.shoulder.cm}</td>
+                  <td className="px-3 py-3 text-xs text-[#3F3D37]">{s.sleeve.in} | {s.sleeve.cm}</td>
+                  <td className="px-3 py-3 text-xs font-medium text-[#111110]">
+                    {activeTab === "girls"
+                      ? `${s.suggestedDressLength?.in} | ${s.suggestedDressLength?.cm}`
+                      : `${s.trouserInseam?.in} | ${s.trouserInseam?.cm}`}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile cards */}
+        <div className="flex flex-col divide-y divide-[#E7E2D6] md:hidden">
+          {(activeTab === "girls" ? girlsSizes : boysSizes).map((s) => (
+            <div key={`${s.size}-${s.usSize}`} className="flex flex-col gap-2.5 bg-white px-5 py-4">
+              <div className="flex items-baseline justify-between">
+                <span className="font-serif text-lg font-semibold">{s.size} (US {s.usSize})</span>
+                <span className="text-xs text-[#6E6C63]">Age {s.age} yrs</span>
+              </div>
+              <dl className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-xs">
+                <div><dt className="text-[10px] text-neutral-400 uppercase">Height</dt><dd>{s.height.in} in ({s.height.cm} cm)</dd></div>
+                <div><dt className="text-[10px] text-neutral-400 uppercase">Chest</dt><dd>{s.chest.in} in ({s.chest.cm} cm)</dd></div>
+                <div><dt className="text-[10px] text-neutral-400 uppercase">Waist</dt><dd>{s.waist.in} in ({s.waist.cm} cm)</dd></div>
+                <div><dt className="text-[10px] text-neutral-400 uppercase">Hip</dt><dd>{s.hip.in} in ({s.hip.cm} cm)</dd></div>
+                <div><dt className="text-[10px] text-neutral-400 uppercase">Shoulder</dt><dd>{s.shoulder.in} in ({s.shoulder.cm} cm)</dd></div>
+                <div><dt className="text-[10px] text-neutral-400 uppercase">Sleeve</dt><dd>{s.sleeve.in} in ({s.sleeve.cm} cm)</dd></div>
+                <div className="col-span-2 pt-1">
+                  <dt className="text-[10px] text-neutral-400 uppercase">
+                    {activeTab === "girls" ? "Suggested Dress Length" : "Trouser Inseam"}
+                  </dt>
+                  <dd className="font-medium text-[#111110]">
+                    {activeTab === "girls"
+                      ? `${s.suggestedDressLength?.in} in (${s.suggestedDressLength?.cm} cm)`
+                      : `${s.trouserInseam?.in} in (${s.trouserInseam?.cm} cm)`}
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          ))}
         </div>
       </div>
     </section>
