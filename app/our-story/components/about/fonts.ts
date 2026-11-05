@@ -1,14 +1,10 @@
-import { Manrope, Newsreader } from "next/font/google";
+// Export standard CSS font classes to prevent build-time font override failures in CI/CD environments (e.g. Firebase App Hosting)
+export const serif = {
+  variable: "font-serif",
+  className: "font-serif",
+};
 
-export const serif = Newsreader({
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-  variable: "--font-about-serif",
-  display: "swap",
-});
-
-export const sans = Manrope({
-  subsets: ["latin"],
-  variable: "--font-about-sans",
-  display: "swap",
-});
+export const sans = {
+  variable: "font-sans",
+  className: "font-sans",
+};
