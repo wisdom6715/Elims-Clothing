@@ -363,14 +363,14 @@ export default function CheckoutPage() {
       {
         key: "phone_number",
         label: "Phone Number",
-        placeholder: "e.g. +44 7930 478645 or +234...",
+        placeholder: "e.g. +44...",
         required: true,
         type: "tel",
       },
       {
         key: "street",
         label: "Street Address",
-        placeholder: "e.g. 22 Oliver House, High Street",
+        placeholder: "e.g. 22 Baker Street",
         required: true,
         span: true,
       },
@@ -395,7 +395,7 @@ export default function CheckoutPage() {
       {
         key: "country",
         label: "Country",
-        placeholder: "e.g. United Kingdom, Nigeria, United States",
+        placeholder: "e.g. United States, Nigeria, United Kingdom",
         required: true,
       },
     ];
