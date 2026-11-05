@@ -2,7 +2,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PopularProducts from "@/components/PopularProducts";
-import { CategoryRibbon, StoryTiles } from "@/components/EditorialTiles";
+import {  StoryTiles } from "@/components/EditorialTiles";
 import CampaignHero from "@/components/CampaignHero";
 import CampaignGallery from "@/components/CampaignGallery";
 
@@ -48,9 +48,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* Categories with authentic campaign imagery */}
-        <CategoryRibbon />
 
         {/* The 4 Editorial Campaign Looks from uploaded artwork */}
         <CampaignGallery />
