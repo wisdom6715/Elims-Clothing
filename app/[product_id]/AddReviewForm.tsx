@@ -109,7 +109,7 @@ export default function AddReviewForm({
 }: AddReviewFormProps) {
   const { user, loading: authLoading } = useCurrentUser();
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
+  const orderId = searchParams?.get("orderId");
 
   const [profile, setProfile] = useState<{ firstName?: string; lastName?: string } | null>(null);
   const [rating, setRating] = useState(0);

@@ -69,7 +69,7 @@ export default function ProductDetail() {
   // review-request email link). Mirrors the pattern used on the other
   // product-detail variant — everything else here is unchanged.
   const searchParams = useSearchParams();
-  const showReviewInput = searchParams.get("GhravexulnqzopmTyrakvulbexonqjzFarnivexoqplumZykrexiphazulvorqenathryxomqevulzankriphexodramulqazvynothrexipulmarkevonqzathryxulvexomqipanidrulzeforvynaqixomthrazulpeknivexorqazulmyrathopvexinulqazomryxevandulphorqaziknexulvyratomqevinaxulphorqazymexidravulnqorixepanqzomulvethryxakopvexinulmux") === "true";
+  const showReviewInput = searchParams?.get("GhravexulnqzopmTyrakvulbexonqjzFarnivexoqplumZykrexiphazulvorqenathryxomqevulzankriphexodramulqazvynothrexipulmarkevonqzathryxulvexomqipanidrulzeforvynaqixomthrazulpeknivexorqazulmyrathopvexinulqazomryxevandulphorqaziknexulvyratomqevinaxulphorqazymexidravulnqorixepanqzomulvethryxakopvexinulmux") === "true";
 
   // Holds the review the user just posted so it renders immediately above
   // the fetched list, with no refetch/remount delay.
