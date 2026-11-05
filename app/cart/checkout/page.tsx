@@ -30,7 +30,12 @@ import { useCurrentUser } from "@/hook/useCurrentUser";
 import type { Address } from "@/types/checkout";
 import { useCart } from "@/hook/useAddToCart";
 import { formatCurrency } from "@/lib/storefront-utils";
-import { getCheckoutValidationError } from "@/lib/checkout-validation";
+import {
+  getCheckoutValidationError,
+  validateAddressDraft,
+  type AddressFieldErrors,
+  type AddressDraft,
+} from "@/lib/checkout-validation";
 
 export default function CheckoutPage() {
   const { user, loading: userLoading } = useCurrentUser();
@@ -43,10 +48,11 @@ export default function CheckoutPage() {
     null,
   );
 
-  // ── Inline address form state (mirrors AddressesPage exactly) ──────────
+  // ── Inline address form state ──────────────────────────────────────────────
   const [addingAddr, setAddingAddr] = useState(false);
   const [editingAddrId, setEditingAddrId] = useState<string | null>(null);
   const [addrDraft, setAddrDraft] = useState<Partial<Address>>({});
+  const [addrErrors, setAddrErrors] = useState<AddressFieldErrors>({});
   const [savingAddr, setSavingAddr] = useState(false);
 
   const [guestName, setGuestName] = useState("");
@@ -56,9 +62,7 @@ export default function CheckoutPage() {
   const [phone, setPhone] = useState("");
   const [paying, setPaying] = useState(false);
 
-  // Fetch saved addresses only for authenticated customers. Guests use the
-  // one-time address entered during this checkout and never write it to
-  // Firestore.
+  // Fetch saved addresses only for authenticated customers.
   useEffect(() => {
     if (userLoading) return;
 
@@ -102,11 +106,11 @@ export default function CheckoutPage() {
       setPhone(user.dialCode ? `+${user.dialCode}${user.phone}` : user.phone);
   }, [selectedAddressId, addresses, user, phone]);
 
-  // ── Address CRUD — identical logic to AddressesPage ─────────────────────
+  // ── Address CRUD ──────────────────────────────────────────────────────────
   const startAddAddr = () => {
     setAddrDraft({
       label: "",
-      phone_number: "",
+      phone_number: phone || "",
       street: "",
       city: "",
       state: "",
@@ -114,12 +118,14 @@ export default function CheckoutPage() {
       country: "Nigeria",
       isDefault: isGuest || addresses.length === 0,
     });
+    setAddrErrors({});
     setAddingAddr(true);
     setEditingAddrId(null);
   };
 
   const startEditAddr = (addr: Address) => {
     setAddrDraft({ ...addr });
+    setAddrErrors({});
     setEditingAddrId(addr.id);
     setAddingAddr(false);
   };
@@ -128,43 +134,70 @@ export default function CheckoutPage() {
     setAddingAddr(false);
     setEditingAddrId(null);
     setAddrDraft({});
+    setAddrErrors({});
   };
 
-  const saveGuestAddr = () => {
+  const saveGuestAddr = (): Address | null => {
+    const validation = validateAddressDraft(addrDraft, phone);
+    if (!validation.isValid) {
+      setAddrErrors(validation.errors);
+      toast.error(
+        validation.firstErrorMessage || "Please complete required address fields.",
+      );
+      if (validation.firstErrorField) {
+        const el = document.getElementById(
+          `addr-field-${validation.firstErrorField}`,
+        );
+        el?.focus();
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return null;
+    }
+
     const nextAddress: Address = {
       id: "guest-checkout",
-      label: addrDraft.label || "Delivery address",
-      phone_number: addrDraft.phone_number || phone,
-      street: addrDraft.street || "",
-      city: addrDraft.city || "",
-      state: addrDraft.state || "",
-      zip: addrDraft.zip || "",
-      country: addrDraft.country || "",
+      label: addrDraft.label?.trim() || "Delivery address",
+      phone_number: addrDraft.phone_number?.trim() || phone.trim(),
+      street: addrDraft.street!.trim(),
+      city: addrDraft.city!.trim(),
+      state: addrDraft.state?.trim() || "",
+      zip: addrDraft.zip?.trim() || "",
+      country: addrDraft.country!.trim(),
       isDefault: true,
     };
 
-    if (
-      !nextAddress.street ||
-      !nextAddress.city ||
-      !nextAddress.state ||
-      !nextAddress.country
-    ) {
-      toast.error("Please complete your delivery address.");
-      return;
-    }
-
     setGuestAddress(nextAddress);
-    setPhone(nextAddress.phone_number);
+    if (nextAddress.phone_number) {
+      setPhone(nextAddress.phone_number);
+    }
     setAddingAddr(false);
     setAddrDraft({});
+    setAddrErrors({});
     toast.success("Delivery address saved for this order");
+    return nextAddress;
   };
 
-  const saveAddAddr = async () => {
+  const saveAddAddr = async (): Promise<Address | null> => {
     if (!user) {
-      saveGuestAddr();
-      return;
+      return saveGuestAddr();
     }
+
+    const validation = validateAddressDraft(addrDraft, phone);
+    if (!validation.isValid) {
+      setAddrErrors(validation.errors);
+      toast.error(
+        validation.firstErrorMessage || "Please complete required address fields.",
+      );
+      if (validation.firstErrorField) {
+        const el = document.getElementById(
+          `addr-field-${validation.firstErrorField}`,
+        );
+        el?.focus();
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return null;
+    }
+
     setSavingAddr(true);
     try {
       const addrRef = collection(db, "users", user.uid, "address");
@@ -179,34 +212,67 @@ export default function CheckoutPage() {
         await batch.commit();
       }
 
+      const phoneToSave = addrDraft.phone_number?.trim() || phone.trim();
       const newDoc = await addDoc(addrRef, {
         userId: user.uid,
-        label: addrDraft.label || "Address",
-        phone_number: addrDraft.phone_number || "",
-        street: addrDraft.street || "",
-        city: addrDraft.city || "",
-        state: addrDraft.state || "",
-        zip: addrDraft.zip || "",
-        country: addrDraft.country || "",
+        label: addrDraft.label?.trim() || "Address",
+        phone_number: phoneToSave,
+        street: addrDraft.street!.trim(),
+        city: addrDraft.city!.trim(),
+        state: addrDraft.state?.trim() || "",
+        zip: addrDraft.zip?.trim() || "",
+        country: addrDraft.country!.trim(),
         isDefault: addrDraft.isDefault || false,
         createdAt: serverTimestamp(),
       });
 
+      const savedAddress: Address = {
+        id: newDoc.id,
+        label: addrDraft.label?.trim() || "Address",
+        phone_number: phoneToSave,
+        street: addrDraft.street!.trim(),
+        city: addrDraft.city!.trim(),
+        state: addrDraft.state?.trim() || "",
+        zip: addrDraft.zip?.trim() || "",
+        country: addrDraft.country!.trim(),
+        isDefault: addrDraft.isDefault || false,
+      };
+
+      if (phoneToSave) setPhone(phoneToSave);
       toast.success("Address added");
       setAddingAddr(false);
       setAddrDraft({});
-      // Immediately select the newly created address for this order
+      setAddrErrors({});
       setSelectedAddressId(newDoc.id);
+      return savedAddress;
     } catch (err) {
       console.error("Failed to add address:", err);
       toast.error("Something went wrong. Please try again.");
+      return null;
     } finally {
       setSavingAddr(false);
     }
   };
 
-  const saveEditAddr = async () => {
-    if (!user || !editingAddrId) return;
+  const saveEditAddr = async (): Promise<Address | null> => {
+    if (!user || !editingAddrId) return null;
+
+    const validation = validateAddressDraft(addrDraft, phone);
+    if (!validation.isValid) {
+      setAddrErrors(validation.errors);
+      toast.error(
+        validation.firstErrorMessage || "Please complete required address fields.",
+      );
+      if (validation.firstErrorField) {
+        const el = document.getElementById(
+          `addr-field-${validation.firstErrorField}`,
+        );
+        el?.focus();
+        el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      return null;
+    }
+
     setSavingAddr(true);
     try {
       const addrRef = collection(db, "users", user.uid, "address");
@@ -221,25 +287,43 @@ export default function CheckoutPage() {
         await batch.commit();
       }
 
+      const phoneToSave = addrDraft.phone_number?.trim() || phone.trim();
       await updateDoc(doc(addrRef, editingAddrId), {
         userId: user.uid,
-        label: addrDraft.label ?? "",
-        phone_number: addrDraft.phone_number ?? "",
-        street: addrDraft.street ?? "",
-        city: addrDraft.city ?? "",
-        state: addrDraft.state ?? "",
-        zip: addrDraft.zip ?? "",
-        country: addrDraft.country ?? "",
+        label: addrDraft.label?.trim() || "Address",
+        phone_number: phoneToSave,
+        street: addrDraft.street!.trim(),
+        city: addrDraft.city!.trim(),
+        state: addrDraft.state?.trim() || "",
+        zip: addrDraft.zip?.trim() || "",
+        country: addrDraft.country!.trim(),
         isDefault: addrDraft.isDefault ?? false,
         updatedAt: serverTimestamp(),
       });
 
+      const updatedAddress: Address = {
+        id: editingAddrId,
+        label: addrDraft.label?.trim() || "Address",
+        phone_number: phoneToSave,
+        street: addrDraft.street!.trim(),
+        city: addrDraft.city!.trim(),
+        state: addrDraft.state?.trim() || "",
+        zip: addrDraft.zip?.trim() || "",
+        country: addrDraft.country!.trim(),
+        isDefault: addrDraft.isDefault ?? false,
+      };
+
+      if (phoneToSave) setPhone(phoneToSave);
       toast.success("Address updated");
       setEditingAddrId(null);
       setAddrDraft({});
+      setAddrErrors({});
+      setSelectedAddressId(editingAddrId);
+      return updatedAddress;
     } catch (err) {
       console.error("Failed to update address:", err);
       toast.error("Something went wrong. Please try again.");
+      return null;
     } finally {
       setSavingAddr(false);
     }
@@ -260,100 +344,214 @@ export default function CheckoutPage() {
     }
   };
 
-  // Same inline form UI as AddressesPage, reused here
-  const renderAddressForm = (onSave: () => void, onCancel: () => void) => (
-    <div className="rounded-xl border border-[#d5dfd6] bg-[#f4f6f1] p-5">
-      <h3 className="mb-4 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0f473a]">
-        {addingAddr || isGuest ? "Add New Address" : "Edit Address"}
-      </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {[
-          ["Label", "label", "e.g. Home, Office"],
-          ["Phone Number", "phone_number", "+234"],
-          ["Street Address", "street", "123 Main Street"],
-          ["City", "city", "Lagos"],
-          ["State", "state", "Lagos State"],
-          ["ZIP Code", "zip", "100001"],
-          ["Country", "country", "Nigeria"],
-        ].map(([label, key, placeholder]) => (
-          <div key={key} className={key === "street" ? "sm:col-span-2" : ""}>
-            <label className="mb-1 block text-[10px] font-semibold uppercase tracking-[0.11em] text-[#6a7c72]">
-              {label}
-            </label>
-            <input
-              type="text"
-              value={(addrDraft as Record<string, string>)[key] || ""}
-              onChange={(e) =>
-                setAddrDraft((d) => ({ ...d, [key]: e.target.value }))
-              }
-              placeholder={placeholder}
+  // ── Address Form UI with clear compulsory / optional indicators ───────────
+  const renderAddressForm = (onSave: () => void, onCancel: () => void) => {
+    const fields: Array<{
+      key: keyof AddressDraft;
+      label: string;
+      placeholder: string;
+      required: boolean;
+      type?: string;
+      span?: boolean;
+    }> = [
+      {
+        key: "label",
+        label: "Address Label",
+        placeholder: "e.g. Home, Office, Studio",
+        required: false,
+      },
+      {
+        key: "phone_number",
+        label: "Phone Number",
+        placeholder: "e.g. +44 7930 478645 or +234...",
+        required: true,
+        type: "tel",
+      },
+      {
+        key: "street",
+        label: "Street Address",
+        placeholder: "e.g. 22 Oliver House, High Street",
+        required: true,
+        span: true,
+      },
+      {
+        key: "city",
+        label: "City",
+        placeholder: "e.g. London, Lagos, New York",
+        required: true,
+      },
+      {
+        key: "state",
+        label: "State / Province / County",
+        placeholder: "e.g. Greater London (optional)",
+        required: false,
+      },
+      {
+        key: "zip",
+        label: "ZIP / Postal Code",
+        placeholder: "e.g. SW8 2SX (optional)",
+        required: false,
+      },
+      {
+        key: "country",
+        label: "Country",
+        placeholder: "e.g. United Kingdom, Nigeria, United States",
+        required: true,
+      },
+    ];
+
+    return (
+      <div className="rounded-xl border border-[#d5dfd6] bg-[#f4f6f1] p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0f473a]">
+            {addingAddr || isGuest ? "Delivery Address" : "Edit Address"}
+          </h3>
+          <span className="text-[11px] text-[#6a7c72]">
+            <span className="text-red-500 font-bold">*</span> = Compulsory
+          </span>
+        </div>
+        <p className="mb-4 text-xs text-[#52685e]">
+          Street, City, Country, and Phone are required for delivery. State and ZIP code are optional.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+          {fields.map(({ key, label, placeholder, required, type, span }) => {
+            const hasError = Boolean(addrErrors[key]);
+            const errorMsg = addrErrors[key];
+
+            return (
+              <div key={key} className={span ? "sm:col-span-2" : ""}>
+                <div className="flex items-center justify-between mb-1">
+                  <label
+                    htmlFor={`addr-field-${key}`}
+                    className="block text-[10px] font-semibold uppercase tracking-[0.11em] text-[#55695f]"
+                  >
+                    {label}{" "}
+                    {required ? (
+                      <span className="text-red-500 font-bold">*</span>
+                    ) : (
+                      <span className="text-[10px] lowercase text-[#85968d]">
+                        (optional)
+                      </span>
+                    )}
+                  </label>
+                  {required ? (
+                    <span className="text-[9px] font-medium uppercase tracking-wider text-[#7e9487]">
+                      Compulsory
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-medium uppercase tracking-wider text-[#9ba9a0]">
+                      Optional
+                    </span>
+                  )}
+                </div>
+
+                <input
+                  id={`addr-field-${key}`}
+                  type={type || "text"}
+                  value={(addrDraft as Record<string, string>)[key] || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setAddrDraft((d) => ({ ...d, [key]: val }));
+                    if (key === "phone_number") {
+                      setPhone(val);
+                    }
+                    if (addrErrors[key]) {
+                      setAddrErrors((prev) => ({ ...prev, [key]: undefined }));
+                    }
+                  }}
+                  placeholder={placeholder}
+                  disabled={savingAddr}
+                  className={`w-full rounded-lg border px-3 py-2.5 text-sm text-[#0f473a] transition-all focus:outline-none disabled:opacity-60 ${
+                    hasError
+                      ? "border-red-500 bg-red-50/40 text-red-900 focus:border-red-600 focus:ring-2 focus:ring-red-200"
+                      : "border-[#c6d0c8] bg-white focus:border-[#0f473a] focus:ring-2 focus:ring-[#dce9db]"
+                  }`}
+                />
+
+                {hasError && (
+                  <p className="mt-1 text-xs font-medium text-red-600 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500" />
+                    {errorMsg}
+                  </p>
+                )}
+              </div>
+            );
+          })}
+
+          {!isGuest && (
+            <div className="sm:col-span-2 flex items-center gap-2 pt-1">
+              <input
+                type="checkbox"
+                id="isDefaultCheckout"
+                checked={!!addrDraft.isDefault}
+                onChange={(e) =>
+                  setAddrDraft((d) => ({ ...d, isDefault: e.target.checked }))
+                }
+                disabled={savingAddr}
+                className="accent-[#0f473a] w-4 h-4"
+              />
+              <label
+                htmlFor="isDefaultCheckout"
+                className="text-xs text-[#52685e]"
+              >
+                Set as default address for future orders
+              </label>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-5 pt-4 border-t border-[#d8e0d9]">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onSave}
               disabled={savingAddr}
-              className="w-full rounded-lg border border-[#c6d0c8] bg-white px-3 py-2.5 text-sm text-[#0f473a] transition-all focus:border-[#0f473a] focus:outline-none focus:ring-2 focus:ring-[#dce9db] disabled:opacity-60"
-            />
+              className="flex items-center gap-1.5 rounded-full bg-[#0f473a] px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-white shadow-sm transition-colors hover:bg-[#1e6151] disabled:opacity-60"
+            >
+              {savingAddr ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <Check size={13} />
+              )}
+              Save Address
+            </button>
+            {(guestAddress || addresses.length > 0) && (
+              <button
+                type="button"
+                onClick={onCancel}
+                disabled={savingAddr}
+                className="flex items-center gap-1.5 rounded-full border border-[#bdc9bf] bg-white px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-[#527164] transition-colors hover:bg-[#f0f4f1] disabled:opacity-60"
+              >
+                <X size={13} /> Cancel
+              </button>
+            )}
           </div>
-        ))}
-        <div className="sm:col-span-2 flex items-center gap-2">
-          <input
-            type="checkbox"
-            id="isDefaultCheckout"
-            checked={!!addrDraft.isDefault}
-            onChange={(e) =>
-              setAddrDraft((d) => ({ ...d, isDefault: e.target.checked }))
-            }
-            disabled={savingAddr}
-            className="accent-[#0f473a]"
-          />
-          <label htmlFor="isDefaultCheckout" className="text-sm text-[#52685e]">
-            Set as default address
-          </label>
+          <p className="text-[11px] text-[#6b8275]">
+            Or continue below — your address will auto-save upon checkout.
+          </p>
         </div>
       </div>
-      <div className="flex gap-2 mt-4">
-        <button
-          onClick={onSave}
-          disabled={savingAddr}
-          className="flex items-center gap-1.5 rounded-full bg-[#0f473a] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.11em] text-white transition-colors hover:bg-[#1e6151] disabled:opacity-60"
-        >
-          {savingAddr ? (
-            <Loader2 size={13} className="animate-spin" />
-          ) : (
-            <Check size={13} />
-          )}
-          Save Address
-        </button>
-        <button
-          onClick={onCancel}
-          disabled={savingAddr}
-          className="flex items-center gap-1.5 rounded-full border border-[#bdc9bf] px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.11em] text-[#527164] transition-colors hover:bg-white disabled:opacity-60"
-        >
-          <X size={13} /> Cancel
-        </button>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
     [items],
   );
+
   const selectedAddress = isGuest
     ? guestAddress
     : (addresses.find((address) => address.id === selectedAddressId) ?? null);
+
   const checkoutName =
     user?.displayName ||
     `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
     guestName.trim();
   const checkoutEmail = user?.email ?? guestEmail.trim();
-  const checkoutValidationError = getCheckoutValidationError({
-    hasAddress: Boolean(selectedAddress),
-    phone,
-    itemCount: items.length,
-    isGuest,
-    name: checkoutName,
-    email: checkoutEmail,
-    acceptedPolicies,
-  });
-  const canPay = !checkoutValidationError && !paying;
+
+  const isFormOpen =
+    addingAddr || Boolean(editingAddrId) || (isGuest && !guestAddress);
 
   const orderRef = useMemo(
     () =>
@@ -365,11 +563,65 @@ export default function CheckoutPage() {
   );
 
   const handlePay = async () => {
-    if (!canPay) {
-      toast.error(checkoutValidationError || "Please complete checkout details first.");
+    if (paying || savingAddr) return;
+
+    if (items.length === 0) {
+      toast.error("Your cart is empty.");
       return;
     }
-    if (!selectedAddress || !checkoutEmail || !checkoutName) return;
+
+    if (isGuest) {
+      if (!guestName.trim() || guestName.trim().length < 2) {
+        toast.error("Please enter your full name.");
+        document.getElementById("guest-name-input")?.focus();
+        return;
+      }
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!guestEmail.trim() || !emailPattern.test(guestEmail.trim())) {
+        toast.error("Please enter a valid email address.");
+        document.getElementById("guest-email-input")?.focus();
+        return;
+      }
+    }
+
+    // Resolve delivery address: if the address form is currently open, or if no address
+    // is selected yet, validate and auto-save the address draft.
+    let effectiveAddress: Address | null = selectedAddress;
+
+    if (isFormOpen || !effectiveAddress) {
+      let saved: Address | null = null;
+      if (editingAddrId) {
+        saved = await saveEditAddr();
+      } else {
+        saved = await saveAddAddr();
+      }
+
+      if (!saved) {
+        // Validation pointed to the exact missing field and showed the toast
+        return;
+      }
+      effectiveAddress = saved;
+    }
+
+    const effectivePhone = (effectiveAddress?.phone_number || phone || "").trim();
+    if (effectivePhone.length < 7) {
+      toast.error("Please enter a valid contact phone number.");
+      document.getElementById("checkout-phone-input")?.focus();
+      return;
+    }
+
+    if (!acceptedPolicies) {
+      toast.error(
+        "Please accept the Terms, Refund Policy, and Privacy Policy to continue.",
+      );
+      return;
+    }
+
+    if (!effectiveAddress) {
+      toast.error("Please enter your delivery address.");
+      return;
+    }
+
     setPaying(true);
     try {
       const response = await fetch("/api/stripe/create-checkout-session", {
@@ -388,8 +640,8 @@ export default function CheckoutPage() {
             size: item.size,
             ...(user ? { cartItemId: item.id } : {}),
           })),
-          address: selectedAddress,
-          phone,
+          address: effectiveAddress,
+          phone: effectivePhone,
           amount: total,
           currency: "usd",
           orderRef,
@@ -416,7 +668,13 @@ export default function CheckoutPage() {
     <div className="elims-checkout min-h-screen bg-[#faf9f4]">
       <Header />
       <div className="store-shell py-8 sm:py-12 lg:py-16">
-        <div className="mb-8 border-b border-[#d9ded3] pb-6"><p className="eyebrow">Almost there</p><h1 className="font-display mt-3 text-4xl leading-none text-[#0f473a] sm:text-5xl">Checkout.</h1></div>
+        <div className="mb-8 border-b border-[#d9ded3] pb-6">
+          <p className="eyebrow">Almost there</p>
+          <h1 className="font-display mt-3 text-4xl leading-none text-[#0f473a] sm:text-5xl">
+            Checkout.
+          </h1>
+        </div>
+
         {isGuest && !loading && (
           <div className="mb-6 rounded-xl border border-[#d5e0d2] bg-[#edf3e9] px-4 py-3 text-sm leading-6 text-[#466454]">
             You are checking out as a guest. No account is required. Your cart
@@ -490,9 +748,10 @@ export default function CheckoutPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
                     <div>
                       <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">
-                        Full Name
+                        Full Name <span className="text-red-500 font-bold">*</span>
                       </label>
                       <input
+                        id="guest-name-input"
                         type="text"
                         value={guestName}
                         onChange={(event) => setGuestName(event.target.value)}
@@ -502,9 +761,10 @@ export default function CheckoutPage() {
                     </div>
                     <div>
                       <label className="block text-xs text-gray-400 uppercase tracking-wide mb-1">
-                        Email Address
+                        Email Address <span className="text-red-500 font-bold">*</span>
                       </label>
                       <input
+                        id="guest-email-input"
                         type="email"
                         value={guestEmail}
                         onChange={(event) => setGuestEmail(event.target.value)}
@@ -531,16 +791,33 @@ export default function CheckoutPage() {
                   </div>
 
                   {guestAddress && !addingAddr ? (
-                    <div className="flex items-start justify-between gap-3 rounded-xl border border-[#C9A96E] bg-[#C9A96E]/5 p-3 text-sm">
+                    <div className="flex items-start justify-between gap-3 rounded-xl border border-[#C9A96E] bg-[#C9A96E]/5 p-4 text-sm">
                       <div>
-                        <p className="font-semibold text-gray-800">
-                          {guestAddress.label}
+                        <div className="flex items-center gap-2">
+                          <p className="font-semibold text-gray-800">
+                            {guestAddress.label || "Delivery address"}
+                          </p>
+                          <span className="rounded-full bg-[#0f473a]/10 px-2 py-0.5 text-[10px] font-semibold text-[#0f473a]">
+                            Saved for this order
+                          </span>
+                        </div>
+                        <p className="mt-1 text-gray-600">
+                          {[
+                            guestAddress.street,
+                            guestAddress.city,
+                            [guestAddress.state, guestAddress.zip]
+                              .filter(Boolean)
+                              .join(" "),
+                            guestAddress.country,
+                          ]
+                            .filter(Boolean)
+                            .join(", ")}
                         </p>
-                        <p className="mt-0.5 text-gray-500">
-                          {guestAddress.street}, {guestAddress.city},{" "}
-                          {guestAddress.state} {guestAddress.zip},{" "}
-                          {guestAddress.country}
-                        </p>
+                        {guestAddress.phone_number && (
+                          <p className="mt-1 text-xs text-gray-500">
+                            Phone: {guestAddress.phone_number}
+                          </p>
+                        )}
                       </div>
                       <button
                         type="button"
@@ -551,14 +828,14 @@ export default function CheckoutPage() {
                       </button>
                     </div>
                   ) : (
-                    renderAddressForm(saveAddAddr, cancelAddrForm)
+                    renderAddressForm(saveGuestAddr, cancelAddrForm)
                   )}
                 </div>
               )}
 
               {!isGuest && (
                 <>
-                  {/* Address — fully inline, no route-outs */}
+                  {/* Address — fully inline */}
                   <div className="border border-gray-100 rounded-2xl bg-white shadow-sm p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
@@ -591,7 +868,7 @@ export default function CheckoutPage() {
                         </p>
                         <button
                           onClick={startAddAddr}
-                          className="inline-block px-4 py-2 rounded-lg text-sm font-medium bg-[#C9A96E] text-white hover:bg-[#A07840] transition-colors"
+                          className="inline-block px-4 py-2 rounded-lg text-sm font-medium bg-[#0f473a] text-white hover:bg-[#1a5a4a] transition-colors"
                         >
                           Add an address
                         </button>
@@ -602,25 +879,25 @@ export default function CheckoutPage() {
                           editingAddrId === addr.id ? null : (
                             <label
                               key={addr.id}
-                              className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${
+                              className={`flex items-start gap-3 p-3.5 rounded-xl border cursor-pointer transition-all ${
                                 selectedAddressId === addr.id
-                                  ? "border-[#C9A96E] bg-[#C9A96E]/5"
+                                  ? "border-[#0f473a] bg-[#0f473a]/5"
                                   : "border-gray-100 hover:border-gray-200"
                               }`}
                             >
                               <input
                                 type="radio"
                                 name="address"
-                                className="mt-1 accent-[#C9A96E]"
+                                className="mt-1 accent-[#0f473a]"
                                 checked={selectedAddressId === addr.id}
                                 onChange={() => setSelectedAddressId(addr.id)}
                               />
                               <div className="text-sm flex-1 min-w-0">
                                 <div className="flex items-center justify-between gap-2 flex-wrap">
                                   <p className="font-semibold text-gray-800">
-                                    {addr.label}{" "}
+                                    {addr.label || "Address"}{" "}
                                     {addr.isDefault && (
-                                      <span className="text-xs text-[#A07840]">
+                                      <span className="text-xs text-[#0f473a] font-medium">
                                         (Default)
                                       </span>
                                     )}
@@ -634,7 +911,7 @@ export default function CheckoutPage() {
                                           setDefaultAddr(addr.id);
                                         }}
                                         title="Set as default"
-                                        className="p-1 rounded-md text-gray-400 hover:text-[#C9A96E] hover:bg-cream-100 transition-all"
+                                        className="p-1 rounded-md text-gray-400 hover:text-[#0f473a] hover:bg-cream-100 transition-all"
                                       >
                                         <Star size={13} />
                                       </button>
@@ -645,16 +922,29 @@ export default function CheckoutPage() {
                                         e.preventDefault();
                                         startEditAddr(addr);
                                       }}
-                                      className="p-1 rounded-md text-gray-400 hover:text-[#C9A96E] hover:bg-cream-100 transition-all"
+                                      className="p-1 rounded-md text-gray-400 hover:text-[#0f473a] hover:bg-cream-100 transition-all"
                                     >
                                       <Pencil size={13} />
                                     </button>
                                   </div>
                                 </div>
-                                <p className="text-gray-500 mt-0.5">
-                                  {addr.street}, {addr.city}, {addr.state}{" "}
-                                  {addr.zip}, {addr.country}
+                                <p className="text-gray-500 mt-1">
+                                  {[
+                                    addr.street,
+                                    addr.city,
+                                    [addr.state, addr.zip]
+                                      .filter(Boolean)
+                                      .join(" "),
+                                    addr.country,
+                                  ]
+                                    .filter(Boolean)
+                                    .join(", ")}
                                 </p>
+                                {addr.phone_number && (
+                                  <p className="text-xs text-gray-400 mt-0.5">
+                                    Phone: {addr.phone_number}
+                                  </p>
+                                )}
                               </div>
                             </label>
                           ),
@@ -672,14 +962,21 @@ export default function CheckoutPage() {
                   Number
                 </h2>
                 <input
+                  id="checkout-phone-input"
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+234 800 000 0000"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPhone(val);
+                    if (addingAddr || editingAddrId) {
+                      setAddrDraft((d) => ({ ...d, phone_number: val }));
+                    }
+                  }}
+                  placeholder="+234 800 000 0000 or +44 7930 478645"
                   className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#C9A96E] focus:ring-2 focus:ring-[#C9A96E]/20 transition-all"
                 />
                 <p className="text-xs text-gray-400 mt-2">
-                  Used for delivery updates and payment confirmation.
+                  Used for courier delivery updates and payment confirmation.
                 </p>
               </div>
             </div>
@@ -720,7 +1017,7 @@ export default function CheckoutPage() {
                     onChange={(event) =>
                       setAcceptedPolicies(event.target.checked)
                     }
-                    className="mt-0.5 accent-[#C9A96E]"
+                    className="mt-0.5 accent-[#0f473a]"
                   />
                   <span>
                     I have read and agree to the{" "}
@@ -728,7 +1025,7 @@ export default function CheckoutPage() {
                       href="/terms-of-service"
                       target="_blank"
                       rel="noreferrer"
-                      className="underline"
+                      className="underline font-medium text-[#0f473a]"
                     >
                       Terms of Service
                     </a>
@@ -737,7 +1034,7 @@ export default function CheckoutPage() {
                       href="/refund-policy"
                       target="_blank"
                       rel="noreferrer"
-                      className="underline"
+                      className="underline font-medium text-[#0f473a]"
                     >
                       Refund and Return Policy
                     </a>
@@ -746,7 +1043,7 @@ export default function CheckoutPage() {
                       href="/privacy-policy"
                       target="_blank"
                       rel="noreferrer"
-                      className="underline"
+                      className="underline font-medium text-[#0f473a]"
                     >
                       Privacy Policy
                     </a>
@@ -759,28 +1056,32 @@ export default function CheckoutPage() {
 
                 <button
                   onClick={handlePay}
-                  disabled={!canPay}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white bg-[#C9A96E] hover:bg-[#A07840] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={paying || savingAddr || items.length === 0}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-white bg-[#0f473a] hover:bg-[#1a5a4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
                 >
-                  {paying ? (
-                    <Loader2 size={15} className="animate-spin" />
+                  {paying || savingAddr ? (
+                    <Loader2 size={16} className="animate-spin" />
                   ) : null}
-                  {paying ? "Opening secure checkout…" : "Continue securely with Stripe"}
+                  {paying
+                    ? "Opening secure Stripe checkout…"
+                    : savingAddr
+                    ? "Saving address details…"
+                    : "Continue securely with Stripe"}
                 </button>
-                {!selectedAddress && (
-                  <p className="text-xs text-red-400 mt-2 text-center">
-                    Add a delivery address to continue
+
+                {isFormOpen ? (
+                  <p className="text-xs text-[#466454] mt-2.5 text-center">
+                    Your address will be automatically saved when continuing.
                   </p>
-                )}
-                {selectedAddress && phone.trim().length < 7 && (
-                  <p className="text-xs text-red-400 mt-2 text-center">
-                    Enter a valid phone number to continue
+                ) : !selectedAddress ? (
+                  <p className="text-xs text-[#a07840] mt-2.5 text-center">
+                    Please add a delivery address above to continue
                   </p>
-                )}
+                ) : null}
+
                 {!acceptedPolicies && (
-                  <p className="text-xs text-red-400 mt-2 text-center">
-                    Accept the Terms, Refund Policy, and Privacy Policy to
-                    continue.
+                  <p className="text-xs text-[#8c7b64] mt-1.5 text-center">
+                    Please accept the Terms & Policies to continue.
                   </p>
                 )}
               </div>
