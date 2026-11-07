@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { getAdminDb } from "@/lib/firebase-admin";
-import { createLineItems, type StripeCheckoutItem } from "@/lib/stripe-checkout-utils";
+import {
+  createLineItems,
+  MANDATED_STRIPE_PAYMENT_METHODS,
+  FALLBACK_STRIPE_PAYMENT_METHODS,
+  type StripeCheckoutItem,
+} from "@/lib/stripe-checkout-utils";
 import { getStripe } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -64,17 +69,42 @@ export async function POST(request: NextRequest) {
       createdAt: FieldValue.serverTimestamp(),
     }, { merge: true });
 
-    // Mandate Card & Apple Pay (and Google Pay). LinkPay is completely excluded.
-    const session = await getStripe().checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
+    const stripe = getStripe();
+    const baseSessionParams = {
+      mode: "payment" as const,
       customer_email: customer.email.trim(),
-      billing_address_collection: "auto",
+      billing_address_collection: "auto" as const,
       line_items: lineItems,
       success_url: `${origin}/cart/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/cart/checkout?cancelled=1`,
       metadata: { order_ref: orderRef, uid: uid ?? "", guest: String(Boolean(guest)) },
-    });
+    };
+
+    // Mandate only Card, Apple Pay (via "card"), and Amazon Pay as the top priority options.
+    // LinkPay ("link") is completely excluded.
+    let session;
+    try {
+      session = await stripe.checkout.sessions.create({
+        ...baseSessionParams,
+        payment_method_types: [...MANDATED_STRIPE_PAYMENT_METHODS],
+      });
+    } catch (pmErr: any) {
+      // If Amazon Pay is not yet activated in the Stripe Dashboard for this account/currency,
+      // gracefully fall back to ["card"] (Card + Apple Pay, still excluding LinkPay).
+      const msg = String(pmErr?.message || "").toLowerCase();
+      if (msg.includes("amazon_pay") || msg.includes("payment_method_types")) {
+        console.warn(
+          "Amazon Pay not active on this Stripe account/currency; falling back to Card & Apple Pay:",
+          pmErr?.message,
+        );
+        session = await stripe.checkout.sessions.create({
+          ...baseSessionParams,
+          payment_method_types: [...FALLBACK_STRIPE_PAYMENT_METHODS],
+        });
+      } else {
+        throw pmErr;
+      }
+    }
 
     if (!session.url) throw new Error("Stripe did not provide a Checkout URL.");
     await pendingRef.set({ stripe_session_id: session.id, stripe_session_url: session.url, updatedAt: FieldValue.serverTimestamp() }, { merge: true });

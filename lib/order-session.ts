@@ -13,7 +13,7 @@ const FROM =
   process.env.RESEND_FROM_EMAIL ||
   `${BRAND} Orders <noreply@elimsclothings.com>`;
 
-const PRIMARY_ADMIN_EMAIL = "olayiwolaibrahim46@gmail.com";
+const PRIMARY_ADMIN_EMAIL = "elimsclothings2022@gmail.com";
 
 const getAdminOrderRecipients = (): string[] => {
   const configured = [
@@ -464,7 +464,7 @@ async function sendOrderEmails(args: {
     });
   }
 
-  // 2. Send notification email to the admin (olayiwolaibrahim46@gmail.com)
+  // 2. Send notification email to the admin (elimsclothings2022@gmail.com)
   const adminRecipients = getAdminOrderRecipients();
   if (adminRecipients.length > 0) {
     jobs.push({

@@ -1,3 +1,12 @@
+/**
+ * Mandated Stripe Checkout payment methods in priority order:
+ * 1. "card" (Direct Card + Apple Pay wallet at the top on Apple devices)
+ * 2. "amazon_pay" (Amazon Pay)
+ * LinkPay ("link") is strictly excluded.
+ */
+export const MANDATED_STRIPE_PAYMENT_METHODS = ["card", "amazon_pay"] as const;
+export const FALLBACK_STRIPE_PAYMENT_METHODS = ["card"] as const;
+
 export type StripeCheckoutItem = {
   product: string;
   product_id: string;

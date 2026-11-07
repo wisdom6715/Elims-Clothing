@@ -1,7 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { createLineItems, itemLabel, normalizeCheckoutQuantity, toMinorUnit } from "./stripe-checkout-utils";
+import {
+  createLineItems,
+  itemLabel,
+  MANDATED_STRIPE_PAYMENT_METHODS,
+  normalizeCheckoutQuantity,
+  toMinorUnit,
+} from "./stripe-checkout-utils";
 
 describe("Stripe checkout utilities", () => {
+  it("mandates only Card (including Apple Pay) and Amazon Pay in priority order and excludes LinkPay", () => {
+    expect(MANDATED_STRIPE_PAYMENT_METHODS).toEqual(["card", "amazon_pay"]);
+    expect(MANDATED_STRIPE_PAYMENT_METHODS).not.toContain("link");
+  });
+
   it("converts dollar values to Stripe minor units", () => {
     expect(toMinorUnit(17.85)).toBe(1785);
   });
