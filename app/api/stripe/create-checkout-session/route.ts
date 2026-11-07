@@ -64,8 +64,10 @@ export async function POST(request: NextRequest) {
       createdAt: FieldValue.serverTimestamp(),
     }, { merge: true });
 
+    // Mandate Card & Apple Pay (and Google Pay). LinkPay is completely excluded.
     const session = await getStripe().checkout.sessions.create({
       mode: "payment",
+      payment_method_types: ["card"],
       customer_email: customer.email.trim(),
       billing_address_collection: "auto",
       line_items: lineItems,

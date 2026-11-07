@@ -638,6 +638,8 @@ export default function CheckoutPage() {
             quantity: item.quantity,
             color: item.color,
             size: item.size,
+            imageUrl: item.imageUrl || null,
+            sizeMeasurements: item.sizeMeasurements || null,
             ...(user ? { cartItemId: item.id } : {}),
           })),
           address: effectiveAddress,

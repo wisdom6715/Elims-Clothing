@@ -5,6 +5,8 @@ export type StripeCheckoutItem = {
   quantity: number;
   color?: string | null;
   size?: string | null;
+  imageUrl?: string | null;
+  sizeMeasurements?: Array<{ type: string; value: string }> | null;
 };
 
 export function toMinorUnit(amount: number) {
@@ -32,15 +34,23 @@ export function createLineItems(items: StripeCheckoutItem[], currency = "usd") {
   if (!Array.isArray(items) || items.length === 0) {
     throw new Error("Your bag is empty.");
   }
-  return items.map((item) => ({
-    price_data: {
-      currency,
-      product_data: {
-        name: itemLabel(item).slice(0, 120),
-        metadata: { product_id: item.product_id },
+  return items.map((item) => {
+    const validImage =
+      item.imageUrl && /^https?:\/\//i.test(item.imageUrl)
+        ? [item.imageUrl]
+        : undefined;
+
+    return {
+      price_data: {
+        currency,
+        product_data: {
+          name: itemLabel(item).slice(0, 120),
+          metadata: { product_id: item.product_id },
+          ...(validImage ? { images: validImage } : {}),
+        },
+        unit_amount: toMinorUnit(item.price),
       },
-      unit_amount: toMinorUnit(item.price),
-    },
-    quantity: normalizeCheckoutQuantity(item.quantity),
-  }));
+      quantity: normalizeCheckoutQuantity(item.quantity),
+    };
+  });
 }
