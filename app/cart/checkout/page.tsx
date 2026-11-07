@@ -826,7 +826,7 @@ export default function CheckoutPage() {
                       setAddrDraft((d) => ({ ...d, phone_number: val }));
                     }
                   }}
-                  placeholder="+234 800 000 0000 or +44 7930 478645"
+                  placeholder="+44 ..."
                   className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-800 focus:outline-none focus:border-[#C9A96E] focus:ring-2 focus:ring-[#C9A96E]/20 transition-all"
                 />
                 <p className="text-xs text-gray-400 mt-2">

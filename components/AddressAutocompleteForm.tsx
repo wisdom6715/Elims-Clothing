@@ -340,7 +340,7 @@ export default function AddressAutocompleteForm({
             value={draft.phone_number || ""}
             onChange={(e) => onChangeField("phone_number", e.target.value)}
             onFocus={() => setActiveDropdown(null)}
-            placeholder="e.g. +1 555 234 5678 or +44 7930 478645"
+            placeholder="e.g. +44"
             disabled={saving}
             className={getInputClass("phone_number")}
           />
@@ -462,7 +462,7 @@ export default function AddressAutocompleteForm({
                 setActiveDropdown("state");
                 onChangeField("state", e.target.value);
               }}
-              placeholder="e.g. California, Greater London, Lagos (optional)"
+              placeholder="e.g London, Lagos (optional)"
               disabled={saving}
               className={getInputClass("state", stateOptions.length > 0)}
             />
@@ -594,7 +594,7 @@ export default function AddressAutocompleteForm({
                 setActiveDropdown("city");
                 onChangeField("city", e.target.value);
               }}
-              placeholder="e.g. New York, London, Lagos"
+              placeholder="e.g. New York, Lagos"
               disabled={saving}
               className={getInputClass("city", cityOptions.length > 0)}
             />
@@ -655,7 +655,7 @@ export default function AddressAutocompleteForm({
             value={draft.zip || ""}
             onFocus={() => setActiveDropdown(null)}
             onChange={(e) => onChangeField("zip", e.target.value)}
-            placeholder="e.g. 10001, SW8 2SX (optional)"
+            placeholder="e.g. 10001"
             disabled={saving}
             className={getInputClass("zip")}
           />
