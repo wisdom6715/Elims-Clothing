@@ -13,10 +13,17 @@ const FROM =
   process.env.RESEND_FROM_EMAIL ||
   `${BRAND} Orders <noreply@elimsclothings.store>`;
 
-const ADMIN_ORDER_EMAIL =
-  process.env.ADMIN_ORDER_EMAIL ||
-  process.env.ADMIN_EMAIL ||
-  "olayiwolaibrahim46@gmail.com";
+const PRIMARY_ADMIN_EMAIL = "olayiwolaibrahim46@gmail.com";
+
+const getAdminOrderRecipients = (): string[] => {
+  const configured = [
+    PRIMARY_ADMIN_EMAIL,
+    ...(process.env.ADMIN_ORDER_EMAIL || "").split(","),
+  ]
+    .map((e) => e.trim().toLowerCase())
+    .filter((e) => e.includes("@"));
+  return Array.from(new Set(configured));
+};
 
 // Elims Clothings logo
 const LOGO_URL =
@@ -457,13 +464,14 @@ async function sendOrderEmails(args: {
     });
   }
 
-  // 2. Send notification email to the admin
-  if (ADMIN_ORDER_EMAIL && ADMIN_ORDER_EMAIL.includes("@")) {
+  // 2. Send notification email to the admin (olayiwolaibrahim46@gmail.com)
+  const adminRecipients = getAdminOrderRecipients();
+  if (adminRecipients.length > 0) {
     jobs.push({
       who: "admin",
       promise: resend.emails.send({
         from: FROM,
-        to: ADMIN_ORDER_EMAIL.trim(),
+        to: adminRecipients,
         subject: `🚨 New Order: #${shortId} — ${esc(name)} (${formatMoney(amount, currency)})`,
         html: buildAdminEmailHtml({
           name,
