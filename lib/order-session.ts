@@ -26,8 +26,7 @@ const getAdminOrderRecipients = (): string[] => {
 };
 
 // Elims Clothings logo
-const LOGO_URL =
-  "https://firebasestorage.googleapis.com/v0/b/elims-clothing.firebasestorage.app/o/image.png?alt=media&token=c9bfafea-c3a7-4eb9-ae02-1d530c697302";
+const LOGO_URL = "https://firebasestorage.googleapis.com/v0/b/elims-clothing.firebasestorage.app/o/WhatsApp_Image_2026-10-15_at_11.42.23_PM__1_-removebg-preview.png?alt=media&token=25f0aa8f-b08e-41b3-9b78-f6181779a299";
 const FOUNDER_SIGNATURE = `Bukola Salako, Founder & CEO, ${BRAND}`;
 
 // Created lazily so a missing key can't crash the build
