@@ -5,6 +5,12 @@ import {
   type CheckoutEligibility,
   type AddressDraft,
 } from "./checkout-validation";
+import {
+  filterCountries,
+  filterStatesForCountry,
+  filterCitiesForCountry,
+  matchCanonicalCountry,
+} from "./address-autocomplete";
 
 const validCustomer: CheckoutEligibility = {
   hasAddress: true,
@@ -142,3 +148,29 @@ describe("validateAddressDraft", () => {
     expect(result.errors).toEqual({});
   });
 });
+
+describe("address autocomplete helpers", () => {
+  it("brings up United States and United Kingdom when typing 'United'", () => {
+    const matches = filterCountries("United").map((c) => c.name);
+    expect(matches).toContain("United States");
+    expect(matches).toContain("United Kingdom");
+    expect(matches).toContain("United Arab Emirates");
+  });
+
+  it("matches country aliases like USA and UK", () => {
+    expect(matchCanonicalCountry("USA")).toBe("United States");
+    expect(matchCanonicalCountry("uk")).toBe("United Kingdom");
+    expect(matchCanonicalCountry("Nigeria")).toBe("Nigeria");
+  });
+
+  it("returns US states when United States is selected", () => {
+    const states = filterStatesForCountry("United States", "Cal");
+    expect(states).toContain("California");
+  });
+
+  it("returns cities for selected country", () => {
+    const ukCities = filterCitiesForCountry("United Kingdom", "Lon");
+    expect(ukCities).toContain("London");
+  });
+});
+

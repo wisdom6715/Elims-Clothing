@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import AddressAutocompleteForm from "@/components/AddressAutocompleteForm";
 import { db } from "@/lib/firebase.config";
 import { useCurrentUser } from "@/hook/useCurrentUser";
 import type { Address } from "@/types/checkout";
@@ -115,7 +116,7 @@ export default function CheckoutPage() {
       city: "",
       state: "",
       zip: "",
-      country: "Nigeria",
+      country: "",
       isDefault: isGuest || addresses.length === 0,
     });
     setAddrErrors({});
@@ -344,196 +345,47 @@ export default function CheckoutPage() {
     }
   };
 
-  // ── Address Form UI with clear compulsory / optional indicators ───────────
-  const renderAddressForm = (onSave: () => void, onCancel: () => void) => {
-    const fields: Array<{
-      key: keyof AddressDraft;
-      label: string;
-      placeholder: string;
-      required: boolean;
-      type?: string;
-      span?: boolean;
-    }> = [
-      {
-        key: "label",
-        label: "Address Label",
-        placeholder: "e.g. Home, Office, Studio",
-        required: false,
-      },
-      {
-        key: "phone_number",
-        label: "Phone Number",
-        placeholder: "e.g. +44...",
-        required: true,
-        type: "tel",
-      },
-      {
-        key: "street",
-        label: "Street Address",
-        placeholder: "e.g. 22 Baker Street",
-        required: true,
-        span: true,
-      },
-      {
-        key: "city",
-        label: "City",
-        placeholder: "e.g. London, Lagos, New York",
-        required: true,
-      },
-      {
-        key: "state",
-        label: "State / Province / County",
-        placeholder: "e.g. Greater London (optional)",
-        required: false,
-      },
-      {
-        key: "zip",
-        label: "ZIP / Postal Code",
-        placeholder: "e.g. SW8 2SX (optional)",
-        required: false,
-      },
-      {
-        key: "country",
-        label: "Country",
-        placeholder: "e.g. United States, Nigeria, United Kingdom",
-        required: true,
-      },
-    ];
-
-    return (
-      <div className="rounded-xl border border-[#d5dfd6] bg-[#f4f6f1] p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[#0f473a]">
-            {addingAddr || isGuest ? "Delivery Address" : "Edit Address"}
-          </h3>
-          <span className="text-[11px] text-[#6a7c72]">
-            <span className="text-red-500 font-bold">*</span> = Compulsory
-          </span>
-        </div>
-        <p className="mb-4 text-xs text-[#52685e]">
-          Street, City, Country, and Phone are required for delivery. State and ZIP code are optional.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {fields.map(({ key, label, placeholder, required, type, span }) => {
-            const hasError = Boolean(addrErrors[key]);
-            const errorMsg = addrErrors[key];
-
-            return (
-              <div key={key} className={span ? "sm:col-span-2" : ""}>
-                <div className="flex items-center justify-between mb-1">
-                  <label
-                    htmlFor={`addr-field-${key}`}
-                    className="block text-[10px] font-semibold uppercase tracking-[0.11em] text-[#55695f]"
-                  >
-                    {label}{" "}
-                    {required ? (
-                      <span className="text-red-500 font-bold">*</span>
-                    ) : (
-                      <span className="text-[10px] lowercase text-[#85968d]">
-                        (optional)
-                      </span>
-                    )}
-                  </label>
-                  {required ? (
-                    <span className="text-[9px] font-medium uppercase tracking-wider text-[#7e9487]">
-                      Compulsory
-                    </span>
-                  ) : (
-                    <span className="text-[9px] font-medium uppercase tracking-wider text-[#9ba9a0]">
-                      Optional
-                    </span>
-                  )}
-                </div>
-
-                <input
-                  id={`addr-field-${key}`}
-                  type={type || "text"}
-                  value={(addrDraft as Record<string, string>)[key] || ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setAddrDraft((d) => ({ ...d, [key]: val }));
-                    if (key === "phone_number") {
-                      setPhone(val);
-                    }
-                    if (addrErrors[key]) {
-                      setAddrErrors((prev) => ({ ...prev, [key]: undefined }));
-                    }
-                  }}
-                  placeholder={placeholder}
-                  disabled={savingAddr}
-                  className={`w-full rounded-lg border px-3 py-2.5 text-sm text-[#0f473a] transition-all focus:outline-none disabled:opacity-60 ${
-                    hasError
-                      ? "border-red-500 bg-red-50/40 text-red-900 focus:border-red-600 focus:ring-2 focus:ring-red-200"
-                      : "border-[#c6d0c8] bg-white focus:border-[#0f473a] focus:ring-2 focus:ring-[#dce9db]"
-                  }`}
-                />
-
-                {hasError && (
-                  <p className="mt-1 text-xs font-medium text-red-600 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500" />
-                    {errorMsg}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-
-          {!isGuest && (
-            <div className="sm:col-span-2 flex items-center gap-2 pt-1">
-              <input
-                type="checkbox"
-                id="isDefaultCheckout"
-                checked={!!addrDraft.isDefault}
-                onChange={(e) =>
-                  setAddrDraft((d) => ({ ...d, isDefault: e.target.checked }))
-                }
-                disabled={savingAddr}
-                className="accent-[#0f473a] w-4 h-4"
-              />
-              <label
-                htmlFor="isDefaultCheckout"
-                className="text-xs text-[#52685e]"
-              >
-                Set as default address for future orders
-              </label>
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-5 pt-4 border-t border-[#d8e0d9]">
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onSave}
-              disabled={savingAddr}
-              className="flex items-center gap-1.5 rounded-full bg-[#0f473a] px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-white shadow-sm transition-colors hover:bg-[#1e6151] disabled:opacity-60"
-            >
-              {savingAddr ? (
-                <Loader2 size={13} className="animate-spin" />
-              ) : (
-                <Check size={13} />
-              )}
-              Save Address
-            </button>
-            {(guestAddress || addresses.length > 0) && (
-              <button
-                type="button"
-                onClick={onCancel}
-                disabled={savingAddr}
-                className="flex items-center gap-1.5 rounded-full border border-[#bdc9bf] bg-white px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-[#527164] transition-colors hover:bg-[#f0f4f1] disabled:opacity-60"
-              >
-                <X size={13} /> Cancel
-              </button>
-            )}
-          </div>
-          <p className="text-[11px] text-[#6b8275]">
-            Or continue below — your address will auto-save upon checkout.
-          </p>
-        </div>
-      </div>
-    );
-  };
+  // ── Address Form UI with autocomplete, suggestions, and geolocation ────────
+  const renderAddressForm = (onSave: () => void, onCancel: () => void) => (
+    <AddressAutocompleteForm
+      idPrefix="addr-field"
+      title={addingAddr || isGuest ? "Delivery Address" : "Edit Address"}
+      draft={addrDraft}
+      errors={addrErrors}
+      saving={savingAddr}
+      showDefaultCheckbox={!isGuest}
+      defaultCheckboxLabel="Set as default address for future orders"
+      showCancelButton={Boolean(guestAddress || addresses.length > 0)}
+      showAutoSaveHint={true}
+      onChangeField={(key, val) => {
+        setAddrDraft((d) => ({ ...d, [key]: val }));
+        if (key === "phone_number") {
+          setPhone(val);
+        }
+        if (addrErrors[key]) {
+          setAddrErrors((prev) => ({ ...prev, [key]: undefined }));
+        }
+      }}
+      onBulkUpdate={(updates) => {
+        setAddrDraft((d) => ({ ...d, ...updates }));
+        if (updates.phone_number) {
+          setPhone(updates.phone_number);
+        }
+        setAddrErrors((prev) => {
+          const next = { ...prev };
+          for (const k of Object.keys(updates) as Array<keyof AddressDraft>) {
+            delete next[k];
+          }
+          return next;
+        });
+      }}
+      onToggleDefault={(checked) =>
+        setAddrDraft((d) => ({ ...d, isDefault: checked }))
+      }
+      onSave={onSave}
+      onCancel={onCancel}
+    />
+  );
 
   const total = useMemo(
     () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),

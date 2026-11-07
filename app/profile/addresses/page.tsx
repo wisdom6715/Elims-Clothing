@@ -24,6 +24,7 @@ import {
 import { toast } from "sonner";
 import { db } from "@/lib/firebase.config";
 import { useCurrentUser } from "@/hook/useCurrentUser";
+import AddressAutocompleteForm from "@/components/AddressAutocompleteForm";
 import { Address } from "../types";
 import {
   validateAddressDraft,
@@ -83,7 +84,7 @@ export default function AddressesPage() {
       city: "",
       state: "",
       zip: "",
-      country: "Nigeria",
+      country: "",
       isDefault: false,
     });
     setErrors({});
@@ -238,176 +239,40 @@ export default function AddressesPage() {
     }
   };
 
-  const AddressForm = ({
-    onSave,
-    onCancel,
-  }: {
-    onSave: () => void;
-    onCancel: () => void;
-  }) => {
-    const fields: Array<{
-      key: keyof AddressDraft;
-      label: string;
-      placeholder: string;
-      required: boolean;
-      type?: string;
-      span?: boolean;
-    }> = [
-      {
-        key: "label",
-        label: "Address Label",
-        placeholder: "e.g. Home, Office, Studio",
-        required: false,
-      },
-      {
-        key: "phone_number",
-        label: "Phone Number",
-        placeholder: "e.g. +44 7930 478645 or +234...",
-        required: true,
-        type: "tel",
-      },
-      {
-        key: "street",
-        label: "Street Address",
-        placeholder: "e.g. 22 Oliver House, High Street",
-        required: true,
-        span: true,
-      },
-      {
-        key: "city",
-        label: "City",
-        placeholder: "e.g. London, Lagos, New York",
-        required: true,
-      },
-      {
-        key: "state",
-        label: "State / Province / County",
-        placeholder: "e.g. Greater London (optional)",
-        required: false,
-      },
-      {
-        key: "zip",
-        label: "ZIP / Postal Code",
-        placeholder: "e.g. SW8 2SX (optional)",
-        required: false,
-      },
-      {
-        key: "country",
-        label: "Country",
-        placeholder: "e.g. United Kingdom, Nigeria, United States",
-        required: true,
-      },
-    ];
-
-    return (
-      <div className="bg-white rounded-xl border border-[#0f473a]/20 shadow-sm p-5">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="text-sm font-semibold text-[#0f473a]">
-            {adding ? "Add New Address" : "Edit Address"}
-          </h3>
-          <span className="text-xs text-gray-500">
-            <span className="text-red-500 font-bold">*</span> = Compulsory
-          </span>
-        </div>
-        <p className="mb-4 text-xs text-gray-500">
-          Street, City, Country, and Phone are required for deliveries. State and ZIP code are optional.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-          {fields.map(({ key, label, placeholder, required, type, span }) => {
-            const hasError = Boolean(errors[key]);
-            const errorMsg = errors[key];
-
-            return (
-              <div key={key} className={span ? "sm:col-span-2" : ""}>
-                <div className="flex items-center justify-between mb-1">
-                  <label
-                    htmlFor={`profile-addr-${key}`}
-                    className="block text-xs font-semibold uppercase tracking-wide text-gray-600"
-                  >
-                    {label}{" "}
-                    {required ? (
-                      <span className="text-red-500 font-bold">*</span>
-                    ) : (
-                      <span className="text-gray-400 lowercase">(optional)</span>
-                    )}
-                  </label>
-                  <span className="text-[10px] text-gray-400 uppercase tracking-wider">
-                    {required ? "Compulsory" : "Optional"}
-                  </span>
-                </div>
-
-                <input
-                  id={`profile-addr-${key}`}
-                  type={type || "text"}
-                  value={(draft as Record<string, string>)[key] || ""}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setDraft((d) => ({ ...d, [key]: val }));
-                    if (errors[key]) {
-                      setErrors((prev) => ({ ...prev, [key]: undefined }));
-                    }
-                  }}
-                  placeholder={placeholder}
-                  disabled={saving}
-                  className={`w-full border rounded-lg px-3 py-2.5 text-sm text-gray-800 transition-all focus:outline-none disabled:opacity-60 ${
-                    hasError
-                      ? "border-red-500 bg-red-50/30 focus:border-red-600 focus:ring-2 focus:ring-red-200"
-                      : "border-gray-200 focus:border-[#0f473a] focus:ring-2 focus:ring-[#0f473a]/15"
-                  }`}
-                />
-
-                {hasError && (
-                  <p className="mt-1 text-xs font-medium text-red-600 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500" />
-                    {errorMsg}
-                  </p>
-                )}
-              </div>
-            );
-          })}
-
-          <div className="sm:col-span-2 flex items-center gap-2 pt-1">
-            <input
-              type="checkbox"
-              id="isDefault"
-              checked={!!draft.isDefault}
-              onChange={(e) =>
-                setDraft((d) => ({ ...d, isDefault: e.target.checked }))
-              }
-              disabled={saving}
-              className="accent-[#0f473a] w-4 h-4"
-            />
-            <label htmlFor="isDefault" className="text-sm text-gray-600">
-              Set as default address
-            </label>
-          </div>
-        </div>
-
-        <div className="flex gap-2 mt-5 pt-4 border-t border-gray-100">
-          <button
-            onClick={onSave}
-            disabled={saving}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#0f473a] text-white hover:bg-[#1a5a4a] transition-colors disabled:opacity-60 shadow-sm"
-          >
-            {saving ? (
-              <Loader2 size={13} className="animate-spin" />
-            ) : (
-              <Check size={13} />
-            )}
-            Save Address
-          </button>
-          <button
-            onClick={onCancel}
-            disabled={saving}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors disabled:opacity-60"
-          >
-            <X size={13} /> Cancel
-          </button>
-        </div>
-      </div>
-    );
-  };
+  const renderAddressForm = (onSave: () => void, onCancel: () => void) => (
+    <AddressAutocompleteForm
+      idPrefix="profile-addr"
+      title={adding ? "Add New Address" : "Edit Address"}
+      draft={draft}
+      errors={errors}
+      saving={saving}
+      showDefaultCheckbox={true}
+      defaultCheckboxLabel="Set as default address"
+      showCancelButton={true}
+      showAutoSaveHint={false}
+      onChangeField={(key, val) => {
+        setDraft((d) => ({ ...d, [key]: val }));
+        if (errors[key]) {
+          setErrors((prev) => ({ ...prev, [key]: undefined }));
+        }
+      }}
+      onBulkUpdate={(updates) => {
+        setDraft((d) => ({ ...d, ...updates }));
+        setErrors((prev) => {
+          const next = { ...prev };
+          for (const k of Object.keys(updates) as Array<keyof AddressDraft>) {
+            delete next[k];
+          }
+          return next;
+        });
+      }}
+      onToggleDefault={(checked) =>
+        setDraft((d) => ({ ...d, isDefault: checked }))
+      }
+      onSave={onSave}
+      onCancel={onCancel}
+    />
+  );
 
   return (
     <div className="flex flex-col gap-5">
@@ -421,7 +286,7 @@ export default function AddressesPage() {
         </button>
       </div>
 
-      {adding && <AddressForm onSave={saveAdd} onCancel={cancelForm} />}
+      {adding && renderAddressForm(saveAdd, cancelForm)}
 
       {loading ? (
         <div className="flex items-center justify-center py-20 gap-2 text-sm text-gray-400">
@@ -445,11 +310,9 @@ export default function AddressesPage() {
         <div className="grid grid-cols-1 gap-4">
           {addresses.map((addr) =>
             editingId === addr.id ? (
-              <AddressForm
-                key={addr.id}
-                onSave={saveEdit}
-                onCancel={cancelForm}
-              />
+              <div key={addr.id}>
+                {renderAddressForm(saveEdit, cancelForm)}
+              </div>
             ) : (
               <div
                 key={addr.id}
