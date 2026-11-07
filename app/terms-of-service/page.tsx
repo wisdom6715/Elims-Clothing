@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = "21 September 2026";
-const SUPPORT_EMAIL = "hello@elimsclothings.store";
+const SUPPORT_EMAIL = "hello@elimsclothings.com";
 const BUSINESS_ADDRESS = "";
 // U.S. state whose law governs these Terms (e.g. "Delaware"). Must be filled in.
 const GOVERNING_STATE = "New Jersey";

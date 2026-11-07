@@ -11,7 +11,7 @@ const GOLD_ACCENT = "#C9A96E";
 // The sending domain must be verified in Resend.
 const FROM =
   process.env.RESEND_FROM_EMAIL ||
-  `${BRAND} Orders <noreply@elimsclothings.store>`;
+  `${BRAND} Orders <noreply@elimsclothings.com>`;
 
 const PRIMARY_ADMIN_EMAIL = "olayiwolaibrahim46@gmail.com";
 
@@ -202,7 +202,7 @@ const emailShell = (inner: string) => `
                     Style for Every Generation · Women · Men · Children
                   </p>
                   <p style="margin:0; color:#9CA3AF; font-size:11px;">
-                    Questions about your order? Contact us anytime at support@elimsclothings.store
+                    Questions about your order? Contact us anytime at support@elimsclothings.com
                   </p>
                 </td>
               </tr>
@@ -491,6 +491,7 @@ async function sendOrderEmails(args: {
   }
 
   const results = await Promise.allSettled(jobs.map((j) => j.promise));
+  let anySent = false;
   results.forEach((r, i) => {
     const who = jobs[i].who;
     if (r.status === "rejected") {
@@ -498,9 +499,11 @@ async function sendOrderEmails(args: {
     } else if (r.value?.error) {
       console.error(`Order confirmation email failed (${who}):`, r.value.error);
     } else {
+      anySent = true;
       console.log(`Order confirmation email successfully sent (${who}) for order #${shortId}`);
     }
   });
+  return anySent;
 }
 
 // ─── Fulfillment ─────────────────────────────────────────────────────────────
@@ -517,7 +520,35 @@ export async function fulfillStripeSession(session: Stripe.Checkout.Session) {
     .where("stripe_session_id", "==", session.id)
     .limit(1)
     .get();
-  if (!existing.empty) return { confirmed: true, orderId: existing.docs[0].id };
+  if (!existing.empty) {
+    const existingDoc = existing.docs[0];
+    const existingData = existingDoc.data();
+    // If emails failed on an earlier attempt (e.g. before domain fix), retry sending them once
+    if (!existingData.emails_sent) {
+      try {
+        const itemsWithImages = await resolveItemsWithImages(existingData.items ?? []);
+        const sent = await sendOrderEmails({
+          orderId: existingDoc.id,
+          email: existingData.email ?? null,
+          name: existingData.username || "Customer",
+          phone: existingData.phone || "",
+          amount: Number(existingData.amount) || 0,
+          currency: String(existingData.currency || "USD"),
+          address: existingData.address ?? null,
+          items: itemsWithImages,
+          sessionId: session.id,
+          paymentIntentId: existingData.stripe_payment_intent ?? null,
+          livemode: Boolean(existingData.livemode),
+        });
+        if (sent) {
+          await existingDoc.ref.set({ emails_sent: true }, { merge: true });
+        }
+      } catch (retryErr) {
+        console.error("Retry order email failed:", retryErr);
+      }
+    }
+    return { confirmed: true, orderId: existingDoc.id };
+  }
 
   const pendingRef = adminDb.collection("pending_orders").doc(orderRef);
   const pending = await pendingRef.get();
@@ -620,7 +651,7 @@ export async function fulfillStripeSession(session: Stripe.Checkout.Session) {
 
   // Send emails to both buyer and admin
   try {
-    await sendOrderEmails({
+    const sent = await sendOrderEmails({
       orderId: orderDoc.id,
       email,
       name,
@@ -633,6 +664,9 @@ export async function fulfillStripeSession(session: Stripe.Checkout.Session) {
       paymentIntentId,
       livemode: session.livemode,
     });
+    if (sent) {
+      await orderDoc.set({ emails_sent: true }, { merge: true });
+    }
   } catch (err) {
     console.error("Order confirmation emails could not be sent:", err);
   }
